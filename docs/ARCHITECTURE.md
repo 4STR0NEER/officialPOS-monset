@@ -1,6 +1,6 @@
 # Monset POS: Architecture
 
-Status: **Phase 0 draft, awaiting approval.** Compliance core version: `core 0.0.0` (unreleased).
+Status: **Phase 1 built** (compliance core + tests). Compliance core version: `core 0.1.0` (pre-accreditation).
 
 Every regulatory statement here is a requirement still to verify. Anything that is in doubt is listed in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 
@@ -11,13 +11,13 @@ Every regulatory statement here is a requirement still to verify. Anything that 
 | Layer | Choice | Why |
 |---|---|---|
 | Language | TypeScript (strict) | One language for the core, UI, hub and tests. The compliance core runs unchanged in every runtime. |
-| Monorepo | pnpm workspaces | Lets the core have its own version number while the rest of the app ships around it. No build orchestrator until we need one. |
+| Monorepo | npm workspaces | npm ships with Node, so there's nothing extra to install. Lets the core have its own version number while the rest of the app ships around it. *(Changed from pnpm in Phase 1.)* |
 | UI | React 19 + Vite + Tailwind v4 + Motion | The same stack as the Monset website, so the brand tokens carry over directly. |
 | Storage | SQLite everywhere | One schema and one set of SQL. Its WAL mode with `synchronous=FULL` survives a power cut. |
-| ↳ hub / Windows | `better-sqlite3` (Node) | Synchronous native SQLite: fast, and simple to make crash-safe. |
+| ↳ hub / Windows | `node:sqlite` (built into Node 24) | Synchronous SQLite with no native module to compile. *(Changed from better-sqlite3 in Phase 1.)* |
 | ↳ PWA | `@sqlite.org/sqlite-wasm` with OPFS (`opfs-sahpool` VFS) in a Web Worker | The official build, and OPFS persists data. |
-| ↳ Android app | Capacitor + `@capacitor-community/sqlite` | Native SQLite on the device. The UI is the same PWA. |
-| Hub | Node 22 LTS, `node:http` + WebSocket (`ws`) | Serves the PWA, receives the terminals' replicated ledgers, drives printers and runs backups. Packaged as one Windows service. |
+| ↳ Android app | Capacitor shell running the same sqlite-wasm/OPFS worker | One adapter fewer. The core is synchronous, and a promise-based plugin would not fit it. App-private WebView storage is not evicted. *(Changed in Phase 1; OPFS in the Android WebView is still to be verified in Phase 3.)* |
+| Hub | Node 24 LTS, `node:http` + WebSocket (`ws`) | Serves the PWA, receives the terminals' replicated ledgers, drives printers and runs backups. Packaged as one Windows service. |
 | Tests | Vitest + fast-check (property tests) + child-process kill tests | See §11. |
 | Crypto | WebCrypto / `node:crypto`: SHA-256, Ed25519, AES-GCM | No third-party crypto in the core. |
 
@@ -54,9 +54,8 @@ packages/
     reports/     BIR backend books, eSales, EIS-ready export
     store/       StoragePort interface + migrations (SQL)
     license/     license verification (read-only to core: core never gates on tier)
-  storage-node/  better-sqlite3 adapter
-  storage-wasm/  sqlite-wasm OPFS adapter
-  storage-cap/   Capacitor SQLite adapter
+  storage-node/  node:sqlite adapter + encrypted backup/restore   (Phase 1)
+  storage-wasm/  sqlite-wasm OPFS adapter (PWA + Android WebView) (Phase 3)
   modules/       BUSINESS MODULES (outside accreditation boundary, see OPEN_QUESTIONS Q2)
     inventory/ purchasing/ payroll/ forecasting/ crm/ workforce/ dashboard/
 apps/
@@ -94,23 +93,19 @@ Money is stored as **integer centavos** (`INTEGER`). The largest grand total, 99
 |---|---|---|
 | `terminal` | This device's identity | `terminal_id`, `device_id`, `min`, `serial`, `sln` (Software License Number), `ptu_no`, `ptu_date`, `vat_mode` |
 | `doc_series` | One row for each (terminal, doc_type) | `doc_type` (INVOICE, ORDER, VOID, REFUND, RETURN, CANCEL, ACK, COLLECTION, X, Z, TXN), `prefix`, `next_no`, `width ≥ 6`, `reset_counter` |
-| `ledger_entry` | **Append only.** One row per issued document | `entry_id`, `seq` (per terminal, gapless), `doc_type`, `doc_no`, `reverses_entry_id`, `business_date`, `issued_at`, `created_offline`, `device_id`, `synced_at`, `user_id`, `totals_json`, `prev_hash`, `hash` |
-| `ledger_line` | Items | `entry_id`, `line_no`, `sku`, `description`, `qty_milli`, `unit_price`, `vat_class` (VATABLE, EXEMPT, ZERO), `line_total`, `discount_alloc` |
-| `ledger_payment` | Tenders | `entry_id`, `method`, `amount`, `provider_ref` |
-| `ledger_special_discount` | SC, PWD, NAAC and Solo Parent capture | `entry_id`, `discount_type`, `holder_name`, `id_no`, `tin`, `rate_bp`, `vat_exempt_amount`, `discount_amount`, `share_basis` (whole, portion or group pro-rata), `channel` (in-store or online) |
-| `buyer` (on the entry) | Buyer details | `name`, `address`, `tin`, `business_style` |
+| `ledger_entry` | **Append only.** One row per issued document, including X and Z readings | `seq` (per terminal, gapless), `doc_type`, `doc_no`, `series_reset`, `reverses_seq`, `issued_at`, `business_date`, `created_offline`, `device_id`, `user_id`, `core_version`, `body`, `prev_hash`, `hash` |
+| ↳ `body` | Canonical JSON, hashed together with the row | Lines (`qtyMilli`, `unitPrice`, `vatClass`, gross, discount, net), payments, change, buyer, totals, the VAT mode and rate applied, and a snapshot of the terminal's MIN, SLN and PTU. Reversals add `original` and `reason`; readings hold the full X or Z snapshot. Special-discount capture (Phase 2) also goes here. Reports read it through SQLite `json_each`. *(Phase 1 merged the separate line, payment and discount tables into this body.)* |
 | `accumulator` | Running totals, one row per terminal | `grand_total` (gross, never decreases), `reset_counter`, `z_counter`, plus running sums for voids, refunds and returns |
-| `reading` | X and Z readings (also ledger entries of type X or Z) | the snapshot fields from §6 |
 | `journal` | E-journal: exact rendered text of each document | `entry_id`, `rendered_text`, `layout_version` |
 | `activity_log` | **Append only, hash-chained** | `at`, `user_id`, `device_id`, `action`, `object`, `before_json`, `after_json`, `prev_hash`, `hash` |
 | `reprint` | Reprint register | `entry_id`, `at`, `user_id`, `reprint_no` |
 | `manual_invoice` | Fallback manual invoices | `manual_series`, `manual_no`, `linked_entry_id`, `amounts`, `reason` |
 | `rule_set` | Rules that change over time | `kind` (VAT_RATE, DISCOUNT_TYPE, …), `effective_from`, `effective_to`, `payload_json`, `source_ref` |
-| `outbox` | Replication to the hub | `entry_id`, `pushed_at`, `ack_at` |
+| `outbox` | Replication to the hub. The sync timestamp lives here, so acknowledging a sync is not an edit to the ledger. | `seq`, `acked_at` |
 
 **Tamper controls**
-1. SQLite `BEFORE UPDATE` and `BEFORE DELETE` triggers on `ledger_*`, `journal`, `activity_log` and `reading` call `RAISE(ABORT)`. The schema itself refuses edits.
-2. **Hash chain:** `hash = SHA-256(prev_hash ‖ canonical_json(entry + lines + payments + discounts))`. Verification runs at startup, before every Z reading and on demand. A broken link logs `INTEGRITY_BREAK` with the first bad sequence number and locks issuing until a supervisor acknowledges it.
+1. SQLite `BEFORE UPDATE` and `BEFORE DELETE` triggers on `ledger_entry`, `journal`, `activity_log` and `rule_set` call `RAISE(ABORT)`. Further triggers keep `accumulator` and `doc_series` moving forward only, and keep the terminal's mode and identity fixed. The schema itself refuses edits.
+2. **Hash chain:** `hash = SHA-256(prev_hash ‖ canonical(header) ‖ body)`. `verifyAll` checks the whole picture in one read snapshot: the chain, gapless `seq` and document numbers, reversal links, journal coverage, accumulators recomputed from the ledger, the series pointers and the activity-log chain. It runs at startup, before every Z reading and on demand. Any issue logs `INTEGRITY_BREAK` and locks issuing. A supervisor's `INTEGRITY_ACK` records the reviewed issues and unlocks; acknowledged issues stay on record and don't re-lock.
 3. **Clock guard:** a document cannot carry a timestamp earlier than the last posted one. Any skew is logged as `CLOCK_ANOMALY`, and the monotonic `seq` is the order of truth.
 4. The core never exposes a `delete` or `update` API. Corrections are made only with reversal documents that carry `reverses_entry_id`.
 
@@ -169,15 +164,15 @@ The page at `monset.co/verify` is **static**. It holds only Monset's root public
 
 ## 10. Sync, offline and the hub
 
-- **Offline flags on every entry:** `created_offline` (whether the hub was unreachable when the entry was posted), `device_id`, `issued_at` (the device clock) and `synced_at` (when the hub acknowledged it).
+- **Offline flags on every entry:** `created_offline` (whether the hub was unreachable when the entry was posted), `device_id` and `issued_at` (the device clock), all hashed. When the hub acknowledged the entry is recorded separately in `outbox.acked_at`.
 - **Replication is one way, terminal to hub.** The terminal pushes its outbox in `seq` order. The hub re-verifies the hash chain for each terminal and stores the replica read-only. A gap or a bad hash is rejected and logged on both sides. Because every terminal owns its own number series, there are no write conflicts to resolve.
 - **Master data** (items, prices, staff, rule sets) flows from the hub to the terminals as versioned snapshots. A sale records the price and rule-set version that were actually applied, so a later price change never rewrites history.
 - **PWA durability:** the PWA calls `navigator.storage.persist()` on first run and shows a warning when the browser refuses. In shape B the hub copy is the durable backup. Q3a asks whether a PWA-only install (shape A on an iPad) is acceptable.
 
 ## 11. Recovery and backup
 
-- WAL mode, `synchronous=FULL`, and the "commit before confirm" rule from §4.
-- **Backup:** a SQLite online backup, encrypted with AES-GCM using a key derived from a client passphrase through PBKDF2 or Argon2. Backups can go to a USB drive, the hub, or the client's own cloud folder.
+- WAL mode, `synchronous=FULL`, and the "commit before confirm" rule from §4. The clock guard refuses to issue when the device clock is more than 5 seconds behind the last document; smaller drift is logged as `CLOCK_ANOMALY`.
+- **Backup:** `VACUUM INTO` a snapshot, encrypted with AES-256-GCM using a scrypt key from a client passphrase (`@monset/storage-node` `backup`). Backups can go to a USB drive, the hub, or the client's own cloud folder.
 - **Restore guard:** a restore is refused if the backup's `(seq, grand_total, z_counter)` is behind data the BIR could already have seen, for example the last printed Z or the hub replica, because that would rewind the numbering. Restoring onto a new device keeps the same series and totals, needs a supervisor, and is logged.
 
 ## 12. Licensing and tiers

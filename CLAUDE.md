@@ -25,7 +25,11 @@ This is one POS build, submitted to BIR for accreditation under RMO No. 24-2023 
 
 ## Stack
 
-pnpm workspaces · TypeScript strict · React 19 + Vite + Tailwind v4 + Motion · SQLite (better-sqlite3 on the hub, sqlite-wasm with OPFS in the PWA, Capacitor SQLite on Android) · Vitest + fast-check.
+npm workspaces · TypeScript strict (erasable syntax only, so Node 24 runs `.ts` directly) · React 19 + Vite + Tailwind v4 + Motion · SQLite (`node:sqlite` on the hub, sqlite-wasm with OPFS in the PWA and the Android WebView) · Vitest + fast-check.
+
+Commands: `npm test` (everything, including crash and concurrency tests), `npm run typecheck`, `npm run demo` (prints one simulated day's e-journal). Update a golden file only on purpose: `npx vitest run -u`, then review the diff.
+
+The core API is synchronous (`Db` port in `packages/core/src/port.ts`), so a whole posting is one SQLite transaction. Never add an async step inside `append()`.
 
 ## Design
 

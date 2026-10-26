@@ -69,3 +69,14 @@ Which 58mm and 80mm ESC/POS models will we demo on? Golden files are byte-exact,
 
 **Q20. Accreditation demo hardware.** · open · Owner: user
 Which tablet model and which hub mini PC? These determine the device serial format on invoices.
+
+## Raised in Phase 1
+
+**Q21. Clock tolerance.** · open · Owner: RDO
+The terminal refuses to issue when its clock is more than 5 seconds behind the last document, and logs smaller drift. Does BIR prescribe a tolerance or an approved time source (for example PAGASA or NTP)? Default: 5 seconds, configurable.
+
+**Q22. VAT mode change mid-day.** · open · Owner: CPA
+When a client becomes VAT-registered, should the switch be allowed only right after a Z reading? Default: the change is allowed and logged with before and after values. Phase 2 will require a Z reading first.
+
+**Q23. Rounding on partial refunds.** · open · Owner: CPA
+Partial refunds are prorated cumulatively, so the last one lands exactly on the original amount. In rare rounding cases up to 1 centavo of line discount can stay unreversed. Is that acceptable, or should the final refund always clear the remainder?

@@ -2,80 +2,73 @@
 
 This file is the accreditation evidence pack. Each requirement maps to its module, table, function and test.
 
-Status key: `planned` → `built` → `tested` → `demo-ready`. Test IDs are reserved now, and Phase N adds the test files at the paths shown. CI fails if any row is missing a test.
+Status key: `planned` → `partial` (some of it built and tested) → `tested` → `demo-ready`.
+Test files: **core** = `packages/core/test/core.test.ts`, **prop** = `packages/core/test/property.test.ts` (fast-check, 150 random business days per property), **golden** = `packages/core/test/golden.test.ts`, **dur** = `packages/storage-node/test/durability.test.ts` (real child processes on a real database file). The test name starts with the test ID.
 
-Compliance core version under evaluation: **`core 0.0.0` (unreleased)**
+Run everything: `npm test`. Compliance core under evaluation: **`core 0.1.0`** (pre-accreditation).
 
-Sources are as cited in the kickoff brief and **still to be verified** (see OPEN_QUESTIONS.md). Annex F (the Functional and Technical Evaluation Checklist) will be cross-mapped once the RDO supplies it (Q7).
+Sources are as cited in the kickoff brief and **still to be verified** (see OPEN_QUESTIONS.md). Annex F will be cross-mapped once the RDO supplies it (Q7).
 
 ---
 
 ## A. Architectural constraints
 
-| ID | Requirement | Source | Module | Table(s) | Function(s) | Test(s) | Phase | Status |
-|---|---|---|---|---|---|---|---|---|
-| A1 | Single-taxpayer infrastructure: no shared Monset system of record | RMC 110-2026 | whole system, `apps/hub` | n/a | no network client to any Monset backend exists in `core` | `T-A1-no-remote-sor` (static: core has no fetch or URL to a Monset host) | 1 | planned |
-| A2 | Offline first; offline audit flags on every transaction | Brief §2, BIR offline controls | `core/ledger` | `ledger_entry.created_offline, device_id, issued_at, synced_at` | `postSale()` | `T-A2-offline-flags`, `T-SYNC-01..03` | 1, 3 | planned |
-| A3 | The compliance core version is pinned, printed, and never updated silently | Brief §3 | `core`, `apps/pos/sw` | n/a | `verifyCoreManifest()`, SW without `skipWaiting` | `T-A3-manifest-mismatch-locks`, `T-A3-sw-no-autoupdate` | 1, 5 | planned |
-| A4 | Tier gating only through the license; compliance is never gated | Brief §4 | `core/license`, `apps/pos` | n/a | `hasFeature()` (UI and modules only) | `T-A4-core-never-reads-tier` (static), `T-A4-all-live-tiers-same-core` | 5 | planned |
-| A5 | Non-invoicing mode never prints an invoice, and its slips carry the supplementary footer | RMO 24-2023 (SPM) | `core/documents` | `doc_series` | `issueDocument()` refuses INVOICE when `mode=NON_INVOICING` | `T-A5-nonInvoicing-blocks-invoice`, `T-A5-slip-footer` | 2, 5 | planned |
-| A6 | A unique Software License Number for each install, printed on invoices | RMO 24-2023 (cloned machines) | `core/license` | `terminal.sln` | `parseLicense()`, invoice header | `T-A6-sln-unique-format`, `G-INV-*` | 5 | planned |
-| A7 | No training mode and no no-sale mode; demo installs are watermarked and cannot be converted | RR 11-2004 | `core/license`, `core/documents` | `terminal` | mode fixed at install; `renderWatermark()` | `T-A7-no-mode-switch-api`, `T-A7-demo-watermark`, `T-A7-demo-to-live-requires-reset` | 5 | planned |
+| ID | Requirement | Source | Where | Test(s) | Status |
+|---|---|---|---|---|---|
+| A1 | Single-taxpayer: no shared Monset system of record | RMC 110-2026 | whole core: storage is a local `Db` port only | core `T-A1-no-remote-sor` (static scan: no network client in the core) | tested |
+| A2 | Offline first; offline audit flags on every transaction | Brief §2 | `ledger_entry.created_offline, device_id, issued_at` (hashed); `outbox.acked_at`; `markSynced()` | core `T-A2-offline-flags`; multi-terminal sync tests in Phase 3 | partial |
+| A3 | Core version pinned and printed; no silent updates | Brief §3 | `CORE_VERSION`, `ledger_entry.core_version`, journal header | core `T-A3-core-version`. The signed manifest and service-worker test come in Phase 5. | partial |
+| A4 | Tier gating only through the license; compliance never gated | Brief §4 | the core has no tier concept | core `T-A4-core-never-reads-tier` (static) | tested (core side) |
+| A5 | Non-invoicing mode never issues invoices; slips carry the supplementary footer | RMO 24-2023 (SPM) | `append()` refuses INVOICE when `mode=NON_INVOICING` | core `T-A5-nonInvoicing-blocks-invoice`. The slip-footer test comes in Phase 2. | partial |
+| A6 | Unique Software License Number printed on invoices | RMO 24-2023 | `terminal.sln`, snapshotted into each invoice body and journal | golden `G-EJ-01` (prints SLN). License generation comes in Phase 5. | partial |
+| A7 | No training or no-sale mode; demo watermarked and not convertible | RR 11-2004 | trigger `terminal_identity_fixed`, `initTerminal` once only, `renderPlain` watermark | core `T-A7-no-mode-switch-api`, `T-A7-demo-watermark`. The demo-to-live reset comes in Phase 5. | partial |
 
 ## B. Compliance core: RMO 24-2023, Section IV(5)
 
-| ID | Requirement | Module | Table(s) | Function(s) | Test(s) | Phase | Status |
-|---|---|---|---|---|---|---|---|
-| B1 | Accumulated Grand Total: at least 12 digits plus 2 decimals, never reset or reduced; rolls over and increments the reset counter | `core/readings` | `accumulator.grand_total, reset_counter` | `applyToAccumulators()` | `P-B1-gt-monotonic` (property), `T-B1-rollover-increments-reset` | 1 | planned |
-| B2 | Tamper free: append-only ledger, reversals only, integrity breaks detected | `core/ledger` | `ledger_*` (triggers) | `postReversal()`, `verifyChain()` | `T-B2-update-trigger-aborts`, `T-B2-delete-trigger-aborts`, `T-B2-chain-detects-edit`, `P-B2-reversal-refs-original` | 1 | planned |
-| B3 | Activity log: create, edit or delete attempts, export, print, reprint, transmit, login, permission and settings changes, each with user, device, time and before/after values | `core/activity` | `activity_log` | `logActivity()` | `T-B3-each-action-logged`, `T-B3-log-chain` | 1 | planned |
-| B4 | Non-volatile memory: no sale lost on a crash; backup and restore keep numbering and the grand total | `core/store`, `storage-*` | all | `postSale()` (commit before confirm), `backup()`, `restore()` | `C-B4-kill-during-post` (crash), `T-B4-restore-preserves-seq-gt`, `T-B4-restore-refuses-rewind` | 1 | planned |
-| B5 | Electronic journal: complete, exportable, human readable, printable | `core/journal` | `journal` | `exportJournal(range, fmt)` | `T-B5-journal-every-doc`, `G-EJ-01` | 1, 2 | planned |
-| B6a | X reading: mid-shift, does not close the day | `core/readings` | `reading` | `xReading()` | `T-B6-x-not-closing`, `G-X-01` | 1 | planned |
-| B6b | Z reading: every field in §6, Z counter that can never be reset | `core/readings` | `reading`, `accumulator.z_counter` | `zReading()` | `P-B6-z-reconciles-ledger`, `T-B6-z-counter-monotonic`, `G-Z-01` | 1 | planned |
-| B7 | Backend reports: sales book, a separate book per special discount type (SC, PWD, NAAC, Solo Parent), and void, refund, return and discount reports, all exportable | `core/reports` | read-only views | `salesBook()`, `discountBook(type)`, `voidReport()`… | `T-B7-books-reconcile`, `G-RPT-*` | 4 | planned |
-| B8 | Sequential numbering: at least 6 digits, per terminal, no gaps, reset counter; invoice series separate from transaction and order series; supplementary documents in their own series | `core/numbering` | `doc_series` | `allocateNumber()` | `P-B8-gapless-under-interleaving`, `C-B8-gapless-after-crash`, `T-B8-separate-series` | 1 | planned |
-| B9 | Reprint marked as such, and logged | `core/documents` | `reprint` | `reprint(entryId)` | `T-B9-reprint-banner`, `T-B9-reprint-logged` | 2 | planned |
-| B10 | Push functionality (on-demand sales data push) | `core/reports` | `outbox` | `exportSalesSince(cursor)`, `PushTransport` | `T-B10-push-export-shape` | 4 | planned (Q4) |
-| B11 | Validation seal: QR that verifies offline without a shared database | `core/seal`, `apps/verify` | n/a | `signInvoice()`, `verifySeal()` | `T-B11-seal-roundtrip`, `T-B11-tamper-fails`, `T-B11-qr-fits-58mm` | 2 | planned |
-| B12 | Data retention for the legal period; client can export any time; no lock-in | `core/store`, `core/journal` | all | `exportAll()` (SQLite + CSV) | `T-B12-full-export`, `T-B12-no-purge-of-tax-records` | 4 | planned (Q5) |
-| B13 | Monthly eSales; data model ready for EIS JSON | `core/reports` | `ledger_*` | `eSalesMonthly()`, `toEisInvoice()` (mapping only) | `T-B13-esales-reconciles`, `T-B13-eis-fields-complete` | 4 | planned |
+| ID | Requirement | Where | Test(s) | Status |
+|---|---|---|---|---|
+| B1 | Accumulated Grand Total: 12+2 digits, never reset or reduced, rolls over with a reset counter | `accumulator`, `addGrandTotal()`, trigger `accumulator_forward_only` | prop `P-B1-gt-monotonic`; core `T-B1-rollover-increments-reset`, `T-B1-gt-cannot-decrease` | tested |
+| B2 | Tamper free: append-only, reversals only, integrity breaks detected | append-only triggers, `postReversal()`, `verifyAll()` hash chain, `LOCKED` and `INTEGRITY_ACK` | core `T-B2-update/delete-trigger-aborts`, `T-B2-chain-detects-edit`; prop `P-B2-reversal-refs-original`, `P-B2-reversals-bounded` | tested |
+| B3 | Activity log of everything, with user, device, time and before/after | `activity_log` (hash-chained), `log()`, `record()`, refused attempts logged as `REJECTED` | core `T-B3-each-action-logged`, `T-B3-log-chain` | tested |
+| B4 | No sale lost on a crash; backup and restore keep numbering and the grand total | WAL + `synchronous=FULL`, one transaction per posting, `backup()` / `restore()` / `checkRestore()` | dur `C-B4-kill-during-post` (10 SIGKILLs mid-write), `T-B4-restore-preserves-seq-gt`, `T-B4-restore-refuses-rewind` | tested |
+| B5 | Electronic journal: complete, exportable, human readable, printable | `journal` (written in the same transaction), `exportJournal()` | core `T-B5-journal-every-doc`; golden `G-EJ-01`. The printable 58mm, 80mm and A4 layouts come in Phase 2. | partial |
+| B6a | X reading: mid-shift, does not close the day | `xReading()` → ledger entry type X | core `T-B6-x-not-closing` | tested |
+| B6b | Z reading: all §6 fields, Z counter that can never be reset | `zReading()` → ledger entry type Z, `summarize()`, verify-before-Z | prop `P-B6-z-reconciles-ledger`; core `T-B6-...z-counter-monotonic`; golden `G-Z-01` | tested |
+| B7 | Backend reports and special discount books | Phase 4 (reads `body` through `json_each`) | n/a | planned |
+| B8 | Sequential numbering: 6+ digits, per terminal, gapless, reset counter, separate series | `doc_series`, `nextNumber()`, `UNIQUE(doc_type, series_reset, doc_no)`, trigger `doc_series_forward_only` | prop `P-B8-gapless`; dur `P-B8-gapless-under-concurrency` (3 processes), `C-B8-gapless-after-crash`; core `T-B8-separate-series`, `T-B8-series-rollover` | tested |
+| B9 | Reprint marked and logged | Phase 2 | n/a | planned |
+| B10 | Push functionality | `outbox` exists; export and transport come in Phase 4 | n/a | planned (Q4) |
+| B11 | Validation seal (QR) | Phase 2 | n/a | planned |
+| B12 | Data retention; client can export any time; no lock-in | append-only triggers mean nothing in the core can purge tax records; `exportJournal()`; the backup is a plain SQLite file once decrypted | core `T-B2-...` (no deletes). The full export comes in Phase 4. | partial (Q5) |
+| B13 | Monthly eSales; EIS-ready data model | Phase 4 | n/a | planned |
 
 ## C. Invoice content
 
-| ID | Requirement | Module / function | Test(s) | Phase | Status |
-|---|---|---|---|---|---|
-| C1 | Header: registered name, business name or style, address, "VAT REG TIN" or "NON VAT REG TIN" with 9-digit TIN and 5-digit branch, MIN, SLN, serial | `core/documents.renderHeader()` | `T-C1-tin-format`, `G-INV-VAT`, `G-INV-NONVAT` | 2 | planned |
-| C2 | The word "Invoice", never "Official Receipt" | `renderBody()` | `T-C2-no-official-receipt` (scans every golden file) | 2 | planned |
-| C3 | Invoice number, date and time | `renderBody()` | `G-INV-*` | 2 | planned |
-| C4 | Buyer name, address, TIN and business style (required for VAT buyers) | `validateBuyer()` | `T-C4-vat-buyer-required` | 2 | planned |
-| C5 | Lines: quantity, description, unit cost, line total | `renderLines()` | `G-INV-*` | 2 | planned |
-| C6 | VAT amount; mixed VATable, exempt and zero-rated shown separately | `core/totals.computeTotals()` | `P-C6-split-sums`, `G-INV-MIXED` | 2 | planned |
-| C7 | Non-VAT seller: sales subject to percentage tax vs exempt sales | `computeTotals()`, `vat_mode=NONVAT` | `G-INV-NONVAT` | 2 | planned |
-| C8 | "EXEMPT" printed prominently for exempt sellers | `renderBody()` | `G-INV-EXEMPT` | 2 | planned |
-| C9 | Special discount types driven by data (SC, PWD, NAAC, Solo Parent) | `rule_set(kind=DISCOUNT_TYPE)` | `T-C9-new-type-via-config` | 2 | planned |
-| C10 | Capture name, ID number, TIN, rate, VAT-exemption breakdown and signature line | `ledger_special_discount`, `renderDiscountBlock()` | `G-INV-SC`, `G-INV-PWD`, `G-INV-NAAC`, `G-INV-SOLO` | 2 | planned |
-| C11 | No signature line for online or app transactions; ID, TIN and breakdown still required | `channel=ONLINE` | `T-C11-online-no-sig` | 2 | planned |
-| C12 | Digital National Senior Citizen ID accepted | ID-type list in the rule set | `T-C12-digital-id` | 2 | planned |
-| C13 | No purchase booklet required for medicine | rule set | `T-C13-no-booklet` | 2 | planned |
-| C14 | Computation order: remove VAT, then discount | `computeTotals()` | `T-C14-order-of-ops` (worked examples), `P-C14-bounds` | 2 | planned |
-| C15 | F&B group meal with a partial senior or PWD share | `allocateSpecialDiscount()` | `T-C15-group-prorata`, `T-C15-identified-items` | 2 | planned |
-| C16 | No double discounting (promo plus special) | `applyStacking()` | `P-C16-no-double` | 2, 9 | planned |
-| C17 | Footer: Monset name, address, TIN with branch, accreditation number, date issued and valid until | `renderFooter()` + `supplier.json` | `G-INV-*` | 2 | planned (Q8) |
-| C18 | Footer: client PTU or Acknowledgement Certificate number and date | `terminal.ptu_no` | `G-INV-*` | 2 | planned (Q6) |
-| C19 | Supplementary documents carry the bold footer "THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT TAX." | `renderFooter(supplementary)` | `T-C19-footer-on-all-supp` | 2 | planned |
-| C20 | Manual invoice fallback: record it, link it, adjust eSales | `core/ledger.recordManualInvoice()` | `T-C20-manual-link`, `T-C20-esales-adjust` | 2, 4 | planned |
+Phase 2 builds the invoice engine. Phase 1 already covers:
+
+| ID | Requirement | Where | Test(s) | Status |
+|---|---|---|---|---|
+| C2 | "Invoice", never "Official Receipt" | `renderPlain()` | core `T-B5-supplementary-footer` | partial |
+| C5 | Lines: quantity, description, unit cost, total | `priceSale()`, journal | golden `G-EJ-01` | partial |
+| C6 | VAT amount; VATable, exempt and zero-rated shown separately | `priceSale()`, `splitByClass()` | core `totals: extracts 12% VAT…`; prop `P-B6` (the split always sums to net) | partial |
+| C7 / C8 | Non-VAT (percentage tax) and exempt sellers | `vat_mode` NONVAT and EXEMPT | core `totals: non-VAT and exempt sellers` | partial |
+| C19 | Supplementary footer on reversal documents | `renderPlain()` | core `T-B5-supplementary-footer` | partial |
+| (rates) | VAT rate is effective-dated data, not a constant | `rule_set`, `addRule()`, `rule()` | core `totals: VAT rate comes from effective-dated rules` | tested |
+| C1, C3, C4, C9–C18, C20 | Header, buyer, special discounts, footer, manual invoice | Phase 2 | n/a | planned |
 
 ## D. Testing obligations (brief §Testing)
 
-| ID | Obligation | Test(s) |
-|---|---|---|
-| D1 | Grand total never decreases | `P-B1-gt-monotonic` |
-| D2 | No numbering gaps under concurrency or crashes | `P-B8-gapless-under-interleaving`, `C-B8-gapless-after-crash` |
-| D3 | Reversals always reference originals | `P-B2-reversal-refs-original` |
-| D4 | Z totals reconcile with the ledger | `P-B6-z-reconciles-ledger` |
-| D5 | Crash and power-loss simulation | `C-B4-*`, `C-B8-*` |
-| D6 | Offline then sync, multiple terminals | `T-SYNC-01` (replica equals source), `T-SYNC-02` (gap rejected), `T-SYNC-03` (bad hash rejected) |
-| D7 | Golden files for printed layouts | `G-*` at 32 and 48 columns plus A4 |
+| ID | Obligation | Test(s) | Status |
+|---|---|---|---|
+| D1 | Grand total never decreases | prop `P-B1-gt-monotonic` | tested |
+| D2 | No numbering gaps under concurrency or crashes | prop `P-B8`, dur `P-B8-gapless-under-concurrency`, dur `C-B8-gapless-after-crash` | tested |
+| D3 | Reversals always reference originals | prop `P-B2-reversal-refs-original` | tested |
+| D4 | Z totals reconcile with the ledger | prop `P-B6-z-reconciles-ledger` (independent re-summing) | tested |
+| D5 | Crash and power-loss simulation | dur `C-B4-*` (SIGKILL; a true power cut relies on SQLite's documented WAL + FULL fsync guarantees) | tested |
+| D6 | Offline then sync, multiple terminals | Phase 3 | planned |
+| D7 | Golden files for printed layouts | golden `G-EJ-01` (Phase 1 plain journal); invoice layouts come in Phase 2 | partial |
 
-Test ID prefixes: `T-` unit, `P-` property (fast-check), `C-` crash (child-process SIGKILL), `G-` golden file.
+## Phase 1 findings worth showing the TWG
+
+- The concurrency test found a real bug: `verifyAll` read the ledger and the accumulators in separate statements, so it raised a false integrity break while another process was writing. It now reads one SQLite snapshot. The test stays in as a regression guard.
+- Clock control: issuing is refused when the device clock is more than 5 seconds behind the last document (`CLOCK_BEHIND`, logged). Smaller drift is allowed and logged as `CLOCK_ANOMALY`.

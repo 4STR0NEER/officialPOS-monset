@@ -1,0 +1,153 @@
+========================================
+Monset POS Core v0.1.0
+Invoice                     No. 00000001
+Issued          2026-10-26T01:00:04.000Z
+Business date                 2026-10-26
+Terminal T1             MIN 260000000001
+SLN                     MPOS-26-ABCDEF-7
+----------------------------------------
+Chicken adobo rice bowl
+  2.000 x 185.00                  370.00
+Calamansi juice
+  1.000 x 60.00                    60.00
+  less discount                   -10.00
+----------------------------------------
+Gross                             430.00
+Discount                          -10.00
+  PROMO                           -10.00
+Amount due                        420.00
+VATable sales                     375.00
+VAT                                45.00
+VAT-exempt sales                    0.00
+Zero-rated sales                    0.00
+CASH                              500.00
+Change                             80.00
+
+========================================
+Monset POS Core v0.1.0
+Invoice                     No. 00000002
+Issued          2026-10-26T01:00:06.000Z
+Business date                 2026-10-26
+Terminal T1             MIN 260000000001
+SLN                     MPOS-26-ABCDEF-7
+----------------------------------------
+Rice (kg)
+  2.500 x 52.00                   130.00
+----------------------------------------
+Gross                             130.00
+Discount                           -0.00
+Amount due                        130.00
+VATable sales                       0.00
+VAT                                 0.00
+VAT-exempt sales                  130.00
+Zero-rated sales                    0.00
+GCASH                             130.00
+[ISSUED OFFLINE]
+
+========================================
+Monset POS Core v0.1.0
+VOID                        No. 00000001
+Issued          2026-10-26T01:00:08.000Z
+Business date                 2026-10-26
+Terminal T1             MIN 260000000001
+SLN                     MPOS-26-ABCDEF-7
+Reverses                INVOICE 00000002
+Reason                  Wrong item keyed
+----------------------------------------
+Rice (kg)
+  2.500 x 52.00                   130.00
+----------------------------------------
+Gross                             130.00
+Discount                           -0.00
+Amount due                        130.00
+VATable sales                       0.00
+VAT                                 0.00
+VAT-exempt sales                  130.00
+Zero-rated sales                    0.00
+Refunded GCASH                    130.00
+THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT TAX.
+
+========================================
+Monset POS Core v0.1.0
+REFUND                      No. 00000001
+Issued          2026-10-26T01:00:10.000Z
+Business date                 2026-10-26
+Terminal T1             MIN 260000000001
+SLN                     MPOS-26-ABCDEF-7
+Reverses                INVOICE 00000001
+Reason                         Cold food
+----------------------------------------
+Chicken adobo rice bowl
+  1.000 x 185.00                  185.00
+----------------------------------------
+Gross                             185.00
+Discount                           -0.00
+Amount due                        185.00
+VATable sales                     165.18
+VAT                                19.82
+VAT-exempt sales                    0.00
+Zero-rated sales                    0.00
+Refunded CASH                     185.00
+THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT TAX.
+
+========================================
+Monset POS Core v0.1.0
+X                             No. 000001
+Issued          2026-10-26T01:00:12.000Z
+Business date                 2026-10-26
+Terminal T1             MIN 260000000001
+SLN                     MPOS-26-ABCDEF-7
+----------------------------------------
+----------------------------------------
+Gross                             560.00
+Discount                          -10.00
+  PROMO                           -10.00
+Net of discounts                  550.00
+VATable sales                     375.00
+VAT                                45.00
+VAT-exempt sales                  130.00
+Zero-rated sales                    0.00
+----------------------------------------
+Invoices                          1 to 2
+Invoice count                          2
+Beginning grand total               0.00
+Ending grand total                560.00
+Reset counter                          0
+Z counter                              0
+voids (1)                        -130.00
+refunds (1)                      -185.00
+returns (0)                        -0.00
+Net sales                         235.00
+  CASH                            235.00
+  GCASH                             0.00
+
+========================================
+Monset POS Core v0.1.0
+Z                             No. 000001
+Issued          2026-10-26T01:00:14.000Z
+Business date                 2026-10-26
+Terminal T1             MIN 260000000001
+SLN                     MPOS-26-ABCDEF-7
+----------------------------------------
+----------------------------------------
+Gross                             560.00
+Discount                          -10.00
+  PROMO                           -10.00
+Net of discounts                  550.00
+VATable sales                     375.00
+VAT                                45.00
+VAT-exempt sales                  130.00
+Zero-rated sales                    0.00
+----------------------------------------
+Invoices                          1 to 2
+Invoice count                          2
+Beginning grand total               0.00
+Ending grand total                560.00
+Reset counter                          0
+Z counter                              1
+voids (1)                        -130.00
+refunds (1)                      -185.00
+returns (0)                        -0.00
+Net sales                         235.00
+  CASH                            235.00
+  GCASH                             0.00
