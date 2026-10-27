@@ -3,12 +3,15 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc -p .",
-    "demo": "node packages/storage-node/demo.ts"
+    "typecheck": "tsc -p . && tsc -p apps/pos",
+    "demo": "node packages/storage-node/demo.ts",
+    "dev": "npm run dev -w @monset/pos",
+    "build": "npm run build -w @monset/pos"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

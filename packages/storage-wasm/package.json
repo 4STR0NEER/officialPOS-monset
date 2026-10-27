@@ -1,0 +1,8 @@
+{
+  "name": "@monset/storage-wasm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": { "@monset/core": "*", "@sqlite.org/sqlite-wasm": "3.54.1-build1" }
+}

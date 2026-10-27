@@ -42,7 +42,7 @@ export const localTime = (iso: string, tzMinutes: number) =>
   new Date(Date.parse(iso) + tzMinutes * 60_000).toISOString().replace('T', ' ').slice(0, 19);
 
 const qty = (milli: number) => (milli % 1000 === 0 ? String(milli / 1000) : (milli / 1000).toFixed(3));
-const neg = (c: number) => `-${peso(c)}`;
+const neg = (c: number) => (c ? `-${peso(c)}` : peso(0));
 const pct = (bp: number) => `${bp / 100}%`;
 const blank = '____________________';
 

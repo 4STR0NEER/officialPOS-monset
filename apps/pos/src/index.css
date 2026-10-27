@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo/standard.css";
+
+/* Monset "Survey": night-navy shell, drafting-film work surface, contour orange for the one
+   thing to do next, pin red only for late / void / error (always with words). */
+@theme {
+  --color-night: #0b1a2e;
+  --color-night-2: #12243b;
+  --color-night-3: #1d3352;
+  --color-film: #eef1ec;
+  --color-film-2: #e5eae3;
+  --color-well: #dbe2d9;
+  --color-paper: #f9fbf7;
+  --color-line: #c6cfc4;
+  --color-ink: #0b1a2e;
+  --color-ink-soft: #3d4a5a;
+  --color-steel: #8c97a5;
+  --color-mist: #c3ccd6;
+  --color-contour: #e8892f;
+  --color-contour-hover: #f0994a;
+  --color-contour-deep: #a65410;
+  --color-contour-wash: #f8e3cf;
+  --color-pin: #c4321c;
+  --color-pin-wash: #f7dcd5;
+  --color-ok: #2a7550;
+  --color-ok-wash: #d9ecdf;
+
+  --font-sans: "Archivo Variable", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --shadow-card: 0 1px 2px rgb(11 26 46 / 0.08), 0 4px 12px -4px rgb(11 26 46 / 0.12);
+  --shadow-drawer: -12px 0 32px -16px rgb(11 26 46 / 0.35);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    background: var(--color-film);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    caret-color: var(--color-contour-deep);
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  ::selection {
+    background: var(--color-contour);
+    color: var(--color-night);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-contour-deep);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-steel) transparent;
+  }
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  /* Survey-sheet lettering: expanded caps, used for column heads and section labels only. */
+  .map-label {
+    font-stretch: 125%;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .display {
+    font-stretch: 112%;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border-radius: 4px;
+    font-weight: 620;
+    font-stretch: 104%;
+    user-select: none;
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 150ms ease,
+      border-color 150ms ease;
+  }
+  .btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-contour);
+    color: var(--color-night);
+  }
+  .btn-secondary {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 1px solid var(--color-line);
+  }
+  .btn-quiet {
+    color: var(--color-ink-soft);
+  }
+  .btn-danger {
+    background: var(--color-pin);
+    color: #fff;
+  }
+  .btn-night {
+    background: var(--color-night);
+    color: var(--color-film);
+  }
+  /* Selected option in a group (tender, discount type, table, filter): contour orange, per the world. */
+  .btn-on {
+    background: var(--color-contour-wash);
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 2px var(--color-contour-deep);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover:not(:disabled) {
+      background: var(--color-contour-hover);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--color-steel);
+    }
+    .btn-quiet:hover:not(:disabled) {
+      background: var(--color-film-2);
+    }
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0 0.875rem;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    color: var(--color-ink);
+  }
+  .field::placeholder {
+    color: #67727f;
+  }
+  .field:focus {
+    outline: 2px solid var(--color-contour-deep);
+    outline-offset: 0;
+    border-color: transparent;
+  }
+}
+
+/* The check drawer and the success sheet slide; nothing in the order-entry hot path animates. */
+.slide-in {
+  transition:
+    transform 220ms var(--ease-out),
+    opacity 220ms var(--ease-out);
+  @starting-style {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-in {
+    transition: opacity 150ms ease;
+    @starting-style {
+      transform: none;
+    }
+  }
+  .btn {
+    transition: background-color 150ms ease;
+  }
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+}

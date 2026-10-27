@@ -1,6 +1,6 @@
 # Monset POS: Architecture
 
-Status: **Phase 2 built** (invoice engine, layouts, special discounts, supplementary documents, seal). Compliance core version: `core 0.2.0` (pre-accreditation).
+Status: **Phase 3a built** (selling UI on one terminal). Compliance core version: `core 0.2.0` (pre-accreditation). Phase 3b (hub + multi-terminal sync) is next.
 
 Every regulatory statement here is a requirement still to verify. Anything that is in doubt is listed in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 
@@ -242,3 +242,13 @@ The look comes from the Monset website, with tokens copied from `monset-website/
 - **Special discounts** (`core/src/totals.ts`): coverage is either the holder's identified items or a `1/diners` share of every eligible line. Each covered share works out as: VAT removed → discount on the VAT-free amount → the share becomes VAT-exempt. Shares are cumulative fractions, so they never exceed the line. If a promo on the same share is worth more, the promo is kept and the special discount is not applied. Types, rates, eligible categories and accepted IDs are `rule_set` rows (`DISCOUNT_TYPE:<code>`).
 - **New tables in schema v2:** `setting` (seller, supplier, seal key; changes logged, never deleted) and `print_log` (append-only; copy 0 is the original, later copies print "REPRINT #n"). The `MANUAL` series is new, and the terminal gains `paper` and `ptu_label`.
 - **Supplementary documents:** ORDER, ACK and COLLECTION each have their own series. CANCEL may reverse only those, and `verifyAll` enforces what each correcting document may point at.
+
+## Phase 3a notes (as built)
+
+- **`apps/pos`** is a React 19 + Vite + Tailwind v4 PWA. The core and the business module run in a **Web Worker** (`src/worker.ts`) on SQLite-wasm in the browser's private file system (OPFS "SAH pool": persistent, synchronous, no COOP/COEP headers needed). Screens call the worker through a small typed RPC (`src/lib/api.ts`). The screen bundle never imports the compliance core at runtime, only its types.
+- **`@monset/storage-wasm`**: the browser adapter. `T-A2-engine-parity` proves it produces the same ledger, numbers and e-journal as the Node adapter.
+- **`@monset/sell`** is a business module outside the compliance core. It holds staff (PIN, role), menu, tables and open checks, and reaches the ledger only through the core API. It shares the core's transactions through `core.transaction()`, which nests as savepoints, so a check change and its activity-log rows commit together.
+- **Check lifecycle:** seated → ordered (sent to kitchen) → served → bill out (the bill handed to the table is an ORDER slip with the input-tax footer, never an invoice) → paid (`postSale`). Sent items can only be reduced with a supervisor PIN, and that is logged. Move, merge, split and cancel are all logged.
+- **Supervisor approvals** (Z reading, voids, refunds, returns, manual invoices, taking back sent items, cancelling a check with sent items, software updates) are a PIN check in `sell.approve()`, logged as APPROVAL or APPROVAL_FAILED. The approver's ID goes into the reversal body as `approvedBy`.
+- **Updates:** the service worker runs in `prompt` mode. A waiting update installs only from Settings, only when there are no documents since the last Z, and only with a supervisor PIN (logged as SOFTWARE_UPDATE). The test is `T-A3-sw-no-autoupdate`.
+- **Design:** the Service Board direction (surface brief `apps/pos/.impeccable/surfaces/apps-pos.md`). The signature is contour age rings on each check card. DESIGN.md is written at finish.

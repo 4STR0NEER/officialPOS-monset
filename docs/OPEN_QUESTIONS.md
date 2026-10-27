@@ -101,3 +101,14 @@ On any covered share, the system applies whichever is larger, the promo or the s
 
 **Q28. Per-line rounding of VAT exemption.** · open · Owner: CPA
 The VAT exemption is computed line by line, so a group share across several lines can differ by 1 centavo from computing it on the share total. Example from the demo: 23.03 line by line versus 23.04 on the total. Which does BIR expect?
+
+## Raised in Phase 3a
+
+**Q29. Staff PINs.** · open · Owner: Monset / client
+PINs are 4 to 6 digits, stored salted and hashed in the client's own database, and every attempt is logged. Is a PIN enough for supervisor approval of voids, or does BIR (or the client) want a password or badge? Default: PIN.
+
+**Q30. "Online" for a standalone terminal.** · open · Owner: RDO
+`created_offline` means "the hub could not be reached". A terminal with no hub (shape A) is never offline in that sense, so its entries say online. Should a standalone terminal instead flag entries made while the device itself had no internet? Default: hub reachability. Phase 3b adds the hub.
+
+**Q31. Pre-bill wording.** · open · Owner: CPA
+The bill handed to a table before paying is issued as an ORDER SLIP with the input-tax footer. Is "ORDER SLIP" the right title, or should it read "BILLING STATEMENT"? Default: ORDER SLIP.

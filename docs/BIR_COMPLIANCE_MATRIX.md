@@ -24,8 +24,8 @@ The seal is masked in these files because test keys are random.
 | ID | Requirement | Source | Where | Test(s) | Status |
 |---|---|---|---|---|---|
 | A1 | Single-taxpayer: no shared Monset system of record | RMC 110-2026 | whole core: storage is a local `Db` port only; the seal verifies with no server | core `T-A1-no-remote-sor` (static scan) | tested |
-| A2 | Offline first; offline audit flags on every transaction | Brief §2 | `ledger_entry.created_offline, device_id, issued_at` (hashed); `outbox.acked_at`; "[ISSUED OFFLINE]" printed | core `T-A2-offline-flags`. Multi-terminal sync comes in Phase 3. | partial |
-| A3 | Core version pinned and printed; no silent updates | Brief §3 | `CORE_VERSION`, `ledger_entry.core_version`, document footer | core `T-A3-core-version`. The signed manifest and service-worker test come in Phase 5. | partial |
+| A2 | Offline first; offline audit flags on every transaction | Brief §2 | `ledger_entry.created_offline, device_id, issued_at` (hashed); `outbox.acked_at`; "[ISSUED OFFLINE]" printed; PWA runs fully offline on SQLite-wasm/OPFS | core `T-A2-offline-flags`; wasm `T-A2-engine-parity` (tablet engine = hub engine, byte for byte). Multi-terminal sync comes in Phase 3b. | partial |
+| A3 | Core version pinned and printed; no silent updates | Brief §3 | `CORE_VERSION`, `ledger_entry.core_version`, document footer; PWA `registerType: 'prompt'`, install only after Z with supervisor PIN | core `T-A3-core-version`; app `T-A3-sw-no-autoupdate`. The signed manifest comes in Phase 5. | partial |
 | A4 | Tier gating only through the license; compliance never gated | Brief §4 | the core has no tier concept | core `T-A4-core-never-reads-tier` (static) | tested (core side) |
 | A5 | Non-invoicing mode never issues invoices; slips carry the supplementary footer | RMO 24-2023 (SPM) | `append()` refuses INVOICE when `mode=NON_INVOICING`; `issueSupplementary()` | core `T-A5-nonInvoicing-blocks-invoice`; p2 `T-A5-slip-footer` | tested |
 | A6 | Unique Software License Number printed on invoices | RMO 24-2023 | `terminal.sln` in every document header and in the seal | p2 `T-C1-header`, `T-B11-seal-roundtrip`. License generation comes in Phase 5. | partial |
@@ -93,3 +93,14 @@ The seal is masked in these files because test keys are random.
 - **Phase 2:** totals print in the order they are computed: Total sales, then VAT exemption, then discounts, then Amount due. A reader can follow the senior-citizen arithmetic line by line.
 - **Phase 2:** group shares are prorated cumulatively, so the parts always add up to the line exactly. For example, ₱100.01 shared by four diners gives 25.00 and 25.01, never a lost or invented centavo.
 - **Clock control:** issuing is refused when the device clock is more than 5 seconds behind the last document; smaller drift is logged.
+
+## E. Selling (Phase 3a, business module: evidence for the demo, outside the accredited core)
+
+| Control | Where | Test(s) |
+|---|---|---|
+| Bill handed to the table is a supplementary document (ORDER slip with footer), never an invoice | `sell.printBill()` | sell `seat, order, send, bill, senior share, pay` |
+| One invoice per paid check, issued only through `postSale` | `sell.pay()` | same |
+| Logins and failed logins logged | `sell.login()` | sell `PIN sign-in` |
+| Taking back sent items needs a supervisor PIN and is logged | `sell.setQty()` | sell `taking back food…` |
+| Move, merge, split and cancel are logged | `sell.moveTable/merge/split/cancelCheck` | sell `a table holds one open check…` |
+| Voids, refunds, returns, Z readings, manual invoices and updates need a supervisor PIN | `sell.approve()` + UI | covered in UI drive-through (`apps/pos/.impeccable/review/`) |

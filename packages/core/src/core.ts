@@ -189,14 +189,21 @@ export function openCore(db: Db, opts: CoreOptions = {}) {
   const putSetting = (key: string, value: unknown) =>
     db.run(`INSERT INTO setting (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`, key, canonical(value));
 
+  // Nested calls (a business module's transaction calling into the core) become savepoints,
+  // so a module's change and the activity rows it causes commit together or not at all.
+  let depth = 0;
   function tx<T>(fn: () => T): T {
-    db.exec('BEGIN IMMEDIATE');
+    const sp = `sp${depth}`;
+    db.exec(depth === 0 ? 'BEGIN IMMEDIATE' : `SAVEPOINT ${sp}`);
+    depth++;
     try {
       const r = fn();
-      db.exec('COMMIT');
+      depth--;
+      db.exec(depth === 0 ? 'COMMIT' : `RELEASE ${sp}`);
       return r;
     } catch (e) {
-      db.exec('ROLLBACK');
+      depth--;
+      db.exec(depth === 0 ? 'ROLLBACK' : `ROLLBACK TO ${sp}; RELEASE ${sp}`);
       throw e;
     }
   }
@@ -385,6 +392,9 @@ export function openCore(db: Db, opts: CoreOptions = {}) {
 
   return {
     coreVersion: CORE_VERSION,
+
+    /** For business modules: run their own writes in the same transaction system as the core. */
+    transaction: tx,
 
     initTerminal(userId: string, init: TerminalInit) {
       return audited(userId, 'TERMINAL_INIT', () => {
@@ -631,6 +641,43 @@ export function openCore(db: Db, opts: CoreOptions = {}) {
       });
     },
 
+    /** Read-only: the current day so far, as an X reading would show it, without issuing one. */
+    peekReading(): Reading {
+      const z = lastZ();
+      const prev = z ? (JSON.parse(z.body) as Reading) : null;
+      const rows = db.all<EntryRow>(`SELECT * FROM ledger_entry WHERE seq > ? ORDER BY seq`, z?.seq ?? 0);
+      const a = accumulators();
+      return summarize('X', rows, { fromSeq: (z?.seq ?? 0) + 1, grandTotal: prev?.endGrandTotal ?? 0, resetCounter: prev?.endResetCounter ?? 0 }, { grandTotal: a.grand_total, resetCounter: a.reset_counter, zCounter: a.z_counter });
+    },
+
+    /** Read-only: issued documents, newest first, for the journal screen. */
+    documents(o: { before?: number; limit?: number; type?: string; search?: string } = {}) {
+      const rows = db.all<EntryRow>(
+        `SELECT * FROM ledger_entry WHERE seq < ? AND (? IS NULL OR doc_type = ?) ORDER BY seq DESC LIMIT ?`,
+        o.before ?? Number.MAX_SAFE_INTEGER, o.type ?? null, o.type ?? null, Math.min(o.limit ?? 50, 200),
+      );
+      return rows
+        .map((r) => {
+          const b = JSON.parse(r.body);
+          return {
+            seq: r.seq, docType: r.doc_type, number: pad(r.doc_type, r.doc_no), resetCounter: r.series_reset, issuedAt: r.issued_at, userId: r.user_id,
+            offline: r.created_offline === 1, amount: (b.totals?.net ?? b.total ?? b.amount ?? b.netSales ?? null) as number | null,
+            reversesSeq: r.reverses_seq, reversed: !!db.get(`SELECT 1 FROM ledger_entry WHERE reverses_seq = ?`, r.seq),
+            sameDay: r.seq > (lastZ()?.seq ?? 0),
+          };
+        })
+        .filter((d) => !o.search || d.number.includes(o.search));
+    },
+
+    /** Read-only: one document's e-journal text and the parts the UI needs for corrections. */
+    document(seq: number) {
+      const e = entry(seq);
+      const j = db.get<{ text: string }>(`SELECT text FROM journal WHERE seq = ?`, seq);
+      if (!e || !j) throw new CoreError('NOT_FOUND', 'no document with that number');
+      const b = JSON.parse(e.body);
+      return { seq, docType: e.doc_type, number: pad(e.doc_type, e.doc_no), text: j.text, lines: (b.lines ?? []) as { lineNo: number; description: string; qtyMilli: number }[] };
+    },
+
     xReading: (userId: string, online = true) => reading('X', userId, online),
     zReading: (userId: string, online = true) => reading('Z', userId, online),
 
@@ -691,7 +738,10 @@ export function openCore(db: Db, opts: CoreOptions = {}) {
     },
 
     state() {
-      return { terminal: terminal() ?? null, accumulators: accumulators(), locked, issues: lastIssues, coreVersion: CORE_VERSION };
+      return {
+        terminal: terminal() ?? null, seller: setting<Seller>('seller'), supplier: setting<Supplier>('supplier'),
+        accumulators: accumulators(), locked, issues: lastIssues, coreVersion: CORE_VERSION,
+      };
     },
 
     highWater(): HighWater | null {

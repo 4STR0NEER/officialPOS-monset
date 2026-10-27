@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T00:00:00.000Z",
+  "title": "Design System: Monset POS",
+  "extensions": {
+    "colorMeta": {
+      "night": { "role": "neutral", "displayName": "Night Survey", "tonalRamp": ["#05101d", "#0b1a2e", "#12243b", "#1d3352", "#3a4f6c", "#6b7d95", "#a7b3c2", "#dde3ea"] },
+      "film": { "role": "neutral", "displayName": "Drafting Film", "tonalRamp": ["#262a24", "#474d44", "#6c7468", "#959e91", "#bcc4b8", "#dbe2d9", "#e5eae3", "#eef1ec"] },
+      "paper": { "role": "neutral", "displayName": "Paper" },
+      "contour": { "role": "primary", "displayName": "Contour Orange", "tonalRamp": ["#3f1f05", "#6b360c", "#a65410", "#d0711f", "#e8892f", "#f0994a", "#f5bd86", "#f8e3cf"] },
+      "contour-deep": { "role": "primary", "displayName": "Contour Deep" },
+      "contour-wash": { "role": "primary", "displayName": "Contour Wash" },
+      "pin": { "role": "secondary", "displayName": "Pin Red", "tonalRamp": ["#3d0c05", "#6e1709", "#9c2513", "#c4321c", "#de5a44", "#ec8f80", "#f4bdb3", "#f7dcd5"] },
+      "ok": { "role": "secondary", "displayName": "Paid Green" },
+      "steel": { "role": "neutral", "displayName": "Steel" },
+      "mist": { "role": "neutral", "displayName": "Mist" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Screen titles, table names, amount due, invoice number." },
+      "label": { "displayName": "Survey label", "purpose": "Lane heads and data labels beside a value; never an eyebrow." },
+      "figures": { "displayName": "Figures", "purpose": "Every amount, count and document number (tabular)." },
+      "receipt": { "displayName": "Receipt", "purpose": "Printed-document previews only." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 1px 2px rgb(11 26 46 / 0.08), 0 4px 12px -4px rgb(11 26 46 / 0.12)", "purpose": "Check cards, menu tiles, summaries, receipt preview." },
+      { "name": "drawer", "value": "-12px 0 32px -16px rgb(11 26 46 / 0.35)", "purpose": "Check/cart drawer and the supervisor PIN dialog." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Drawer slide-in (220ms) and button press (160ms)." },
+      { "name": "press", "value": "scale(0.97) 160ms", "purpose": "Every button on press; off under reduced motion." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "lane-stacked", "value": "@container < 200px" },
+      { "name": "lane-two-up", "value": "@container >= 440px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one next action on a screen (Pay, Complete sale, New check).",
+      "html": "<button class=\"ds-btn-primary\">Pay 1,015.71</button>",
+      "css": ".ds-btn-primary { background: var(--color-contour, #e8892f); color: var(--color-night, #0b1a2e); min-height: 48px; padding: 0 16px; border: 0; border-radius: 4px; font-weight: 620; font-stretch: 104%; font-variant-numeric: tabular-nums; transition: transform 160ms cubic-bezier(0.23,1,0.32,1), background-color 150ms ease; } .ds-btn-primary:hover { background: #f0994a; } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:focus-visible { outline: 2px solid #a65410; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Every other action.",
+      "html": "<button class=\"ds-btn-secondary\">Print bill</button>",
+      "css": ".ds-btn-secondary { background: #f9fbf7; color: #0b1a2e; min-height: 48px; padding: 0 16px; border: 1px solid #c6cfc4; border-radius: 4px; font-weight: 620; transition: transform 160ms cubic-bezier(0.23,1,0.32,1), border-color 150ms ease; } .ds-btn-secondary:hover { border-color: #8c97a5; } .ds-btn-secondary:active { transform: scale(0.97); } .ds-btn-secondary:focus-visible { outline: 2px solid #a65410; outline-offset: 2px; }"
+    },
+    {
+      "name": "Selected Option",
+      "kind": "chip",
+      "refersTo": "option-selected",
+      "description": "The chosen tender, discount type, table or filter.",
+      "html": "<div class=\"ds-opts\"><button class=\"ds-opt ds-opt-on\">SC 20%</button><button class=\"ds-opt\">PWD 20%</button></div>",
+      "css": ".ds-opts { display: flex; gap: 6px; } .ds-opt { min-height: 48px; padding: 0 14px; background: #f9fbf7; color: #0b1a2e; border: 1px solid #c6cfc4; border-radius: 4px; font-weight: 620; } .ds-opt-on { background: #f8e3cf; border-color: transparent; box-shadow: inset 0 0 0 2px #a65410; }"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Text and number entry.",
+      "html": "<input class=\"ds-field\" placeholder=\"Scan or search items\">",
+      "css": ".ds-field { min-height: 48px; padding: 0 14px; background: #f9fbf7; color: #0b1a2e; border: 1px solid #c6cfc4; border-radius: 4px; font: inherit; caret-color: #a65410; } .ds-field::placeholder { color: #67727f; } .ds-field:focus { outline: 2px solid #a65410; border-color: transparent; }"
+    },
+    {
+      "name": "Rail",
+      "kind": "nav",
+      "refersTo": "rail",
+      "description": "Main navigation, left edge.",
+      "html": "<nav class=\"ds-rail\"><a class=\"ds-rail-item ds-on\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/></svg>Board</a><a class=\"ds-rail-item\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\"/></svg>Readings</a></nav>",
+      "css": ".ds-rail { width: 76px; background: #0b1a2e; padding: 12px 6px; display: flex; flex-direction: column; gap: 4px; } .ds-rail-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border-radius: 4px; color: #c3ccd6; font-size: 11px; font-weight: 500; } .ds-rail-item:hover { background: #12243b; } .ds-on { background: #1d3352; color: #eef1ec; } .ds-on svg { color: #e8892f; }"
+    },
+    {
+      "name": "Check Card with Contour Age Rings",
+      "kind": "card",
+      "refersTo": "check-card",
+      "description": "Signature: an open check on the service board; rings tighten and turn red as the table waits.",
+      "html": "<button class=\"ds-card\"><span class=\"ds-rings\"><svg width=\"60\" height=\"60\"><circle cx=\"30\" cy=\"30\" r=\"23.4\" fill=\"none\" stroke=\"#c4321c\" stroke-width=\"1.25\" opacity=\".7\"/><circle cx=\"30\" cy=\"30\" r=\"26\" fill=\"none\" stroke=\"#c4321c\" stroke-width=\"1.25\" opacity=\".85\"/><circle cx=\"30\" cy=\"30\" r=\"28.5\" fill=\"none\" stroke=\"#c4321c\" stroke-width=\"2\"/><circle cx=\"30\" cy=\"30\" r=\"19.2\" fill=\"#f9fbf7\"/></svg><b>T8</b></span><span><b class=\"ds-total\">1,240.00</b><span class=\"ds-meta\">4 guests · Bea</span><span class=\"ds-late\">32 min · late</span></span></button>",
+      "css": ".ds-card { display: flex; gap: 12px; align-items: center; width: 240px; padding: 10px; background: #f9fbf7; border: 0; border-radius: 4px; text-align: left; box-shadow: 0 1px 2px rgb(11 26 46 / 0.08), 0 4px 12px -4px rgb(11 26 46 / 0.12); } .ds-rings { position: relative; width: 60px; height: 60px; } .ds-rings b { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #0b1a2e; } .ds-total { display: block; font-size: 18px; font-variant-numeric: tabular-nums; } .ds-meta { display: block; font-size: 14px; color: #3d4a5a; } .ds-late { display: block; font-size: 14px; font-weight: 600; color: #c4321c; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night Survey",
+    "overview": "Monset's website draws the company's two peaks as a contour survey: night-navy ground, drafting film, orange contour ink. The POS carries that world onto a working counter screen and takes only what a tool can afford from it: the palette, Archivo with its expanded survey lettering, calm density, and one signature move. Navy is the structure, drafting film is where work happens, orange is the one thing to do next (or what is chosen), and red is held back for trouble.",
+    "keyCharacteristics": [
+      "Night-navy shell, drafting-film work surface, paper cards.",
+      "Contour orange for the primary action and for selection; pin red only for late, void and error, always with words.",
+      "Archivo Variable throughout; expanded tracked caps for survey labels; tabular figures for all money.",
+      "Near-square 4px corners, hairline dividers, soft lift only on cards and the drawer.",
+      "Signature: contour age rings around each table's name."
+    ],
+    "rules": [
+      { "name": "The One Next Thing Rule", "body": "At most one filled Contour Orange button per screen: the action most likely needed next.", "section": "colors" },
+      { "name": "The Words-With-Red Rule", "body": "Pin Red never appears without a word saying what is wrong.", "section": "colors" },
+      { "name": "The Orange Means Chosen Rule", "body": "A chosen option is Contour Wash with a 2px inset Contour Deep keyline. Navy fills are for actions, never selection.", "section": "colors" },
+      { "name": "The Tabular Money Rule", "body": "Every peso figure is tabular and right-aligned in lists.", "section": "typography" },
+      { "name": "The Monospace Is a Receipt Rule", "body": "Monospace appears only where the UI shows a document exactly as printed and journaled.", "section": "typography" },
+      { "name": "The Two Lifts Rule", "body": "Only cards and the drawer cast shadows; everything else separates by tone or hairline.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep one filled Contour Orange action per screen, bottom right of the drawer.",
+      "Do use tabular, right-aligned figures for every amount.",
+      "Do keep all four stage lanes visible whenever the drawer is open.",
+      "Do pair Pin Red with words, every time.",
+      "Do give touch targets 48px+ and payment actions 56px.",
+      "Do keep order entry instant: no animation on adding items, scanning or keypads."
+    ],
+    "donts": [
+      "Don't use orange as text on film; use Contour Deep (#a65410).",
+      "Don't fill a selected option with navy.",
+      "Don't put an uppercase label above a heading as an eyebrow.",
+      "Don't use monospace anywhere except a printed-document preview.",
+      "Don't add shadows beyond the Card and Drawer lifts.",
+      "Don't let toasts cover a receipt or document; they sit bottom-left of the work area and clear on navigation."
+    ]
+  }
+}
