@@ -1,0 +1,41 @@
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+       NON VAT REG TIN 123-456-789-00000
+              MIN: [TO BE ISSUED]
+              SLN: [TO BE ISSUED]
+================================================
+                    INVOICE
+Invoice No.                             00000001
+Date                         2026-10-26 09:00:04
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Haircut
+  1 x 250.00                              250.00
+Hair tonic
+  1 x 80.00                                80.00
+------------------------------------------------
+Total sales                               330.00
+AMOUNT DUE                                330.00
+------------------------------------------------
+Sales subject to percentage tax           250.00
+Exempt sales                               80.00
+------------------------------------------------
+CASH                                      330.00
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0

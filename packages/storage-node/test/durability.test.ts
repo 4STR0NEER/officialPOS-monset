@@ -12,7 +12,9 @@ const tmp = () => mkdtempSync(join(tmpdir(), 'mpos-test-'));
 function freshDb(dir: string, terminalId = 'T1') {
   const path = join(dir, 'pos.db');
   const db = openNodeDb(path);
-  openCore(db).initTerminal('owner', { terminalId, deviceId: `DEV-${terminalId}`, mode: 'LIVE', vatMode: 'VAT' });
+  const pos = openCore(db);
+  pos.initTerminal('owner', { terminalId, deviceId: `DEV-${terminalId}`, mode: 'LIVE', vatMode: 'VAT' });
+  pos.configureSeller('owner', { registeredName: 'Test Store Inc.', address: 'Cebu City', tin: '123456789' });
   db.close();
   return path;
 }

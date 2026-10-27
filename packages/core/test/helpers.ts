@@ -11,6 +11,8 @@ export function clock(start = '2026-10-26T01:00:00.000Z') {
   };
 }
 
+export const SELLER = { registeredName: 'Kusina ni Lola Corp.', businessName: "Lola's Kitchen", address: '12 Osmeña Blvd, Cebu City 6000', tin: '123456789' };
+
 export const TERMINAL: TerminalInit = { terminalId: 'T1', deviceId: 'DEV-1', mode: 'LIVE', vatMode: 'VAT' };
 
 export function make(init: Partial<TerminalInit> = {}, path = ':memory:') {
@@ -18,6 +20,7 @@ export function make(init: Partial<TerminalInit> = {}, path = ':memory:') {
   const c = clock();
   const pos = openCore(db, { now: c.now });
   pos.initTerminal('owner', { ...TERMINAL, ...init });
+  pos.configureSeller('owner', SELLER);
   return { db, pos, clock: c };
 }
 
@@ -26,3 +29,6 @@ export const line = (unitPrice: number, qty = 1, vatClass: SaleLine['vatClass'] 
 });
 
 export const cash = (amount: number) => [{ method: 'CASH', amount }];
+
+/** Printed text with line wrapping undone, for content checks independent of paper width. */
+export const flat = (s: string) => s.replace(/\s+/g, ' ');

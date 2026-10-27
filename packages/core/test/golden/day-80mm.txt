@@ -1,0 +1,824 @@
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000001
+Date                         2026-10-26 09:00:04
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                        ABC Trading Corp.
+Address         88 A.S. Fortuna St, Mandaue City
+TIN                            111-222-333-00002
+Business style                      ABC Hardware
+------------------------------------------------
+Lechon kawali family platter
+  1 x 895.00                              895.00
+Fresh eggs (tray)
+  1 x 260.00                              260.00
+Export order packaging
+  1 x 150.00                              150.00
+------------------------------------------------
+Total sales                             1,305.00
+Less: PROMO discount                      -50.00
+AMOUNT DUE                              1,255.00
+------------------------------------------------
+VATable sales                             754.46
+VAT amount (12%)                           90.54
+VAT-exempt sales                          260.00
+Zero-rated sales                          150.00
+------------------------------------------------
+CARD                                    1,255.00
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000002
+Date                         2026-10-26 09:00:06
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Sinigang na baboy
+  1 x 320.00                              320.00
+Rice
+  2 x 45.00                                90.00
+------------------------------------------------
+Total sales                               410.00
+Less: VAT exemption                       -39.11
+Less: SC discount (20%)                   -65.18
+AMOUNT DUE                                305.71
+------------------------------------------------
+VATable sales                              40.18
+VAT amount (12%)                            4.82
+VAT-exempt sales                          260.71
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                      310.00
+Change                                      4.29
+------------------------------------------------
+SENIOR CITIZEN DISCOUNT
+Name                             Remedios Santos
+ID (OSCA ID) No.                   OSCA-CEB-0001
+TIN                                            -
+Covered amount                            365.00
+Less: VAT exemption                       -39.11
+Less: discount (20%)                      -65.18
+Net                                       260.71
+
+Signature: _____________________________________
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000003
+Date                         2026-10-26 09:00:08
+Terminal / user                         T1 / app
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Chicken inasal meal
+  1 x 199.00                              199.00
+------------------------------------------------
+Total sales                               199.00
+Less: VAT exemption                       -21.32
+Less: PWD discount (20%)                  -35.54
+AMOUNT DUE                                142.14
+------------------------------------------------
+VATable sales                               0.00
+VAT amount (12%)                            0.00
+VAT-exempt sales                          142.14
+Zero-rated sales                            0.00
+------------------------------------------------
+GCASH                                     142.14
+------------------------------------------------
+PWD DISCOUNT
+Name                              Juan Dela Cruz
+ID (PWD ID) No.                    PWD-0722-1199
+TIN                                  987-654-321
+Covered amount                            199.00
+Less: VAT exemption                       -21.32
+Less: discount (20%)                      -35.54
+Net                                       142.14
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000004
+Date                         2026-10-26 09:00:10
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Kare-kare
+  1 x 680.00                              680.00
+Crispy pata
+  1 x 790.00                              790.00
+Garlic rice
+  6 x 45.00                               270.00
+------------------------------------------------
+Total sales                             1,740.00
+Less: VAT exemption                       -62.14
+Less: PWD discount (20%)                  -51.79
+Less: SC discount (20%)                   -51.79
+AMOUNT DUE                              1,574.28
+------------------------------------------------
+VATable sales                           1,035.71
+VAT amount (12%)                          124.29
+VAT-exempt sales                          414.28
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                    1,600.00
+Change                                     25.72
+------------------------------------------------
+SENIOR CITIZEN DISCOUNT
+Name                               Benito Garcia
+ID (Digital National Senior Citizen ID) No.
+                                    DNSC-2025-55
+TIN                                            -
+Share of group order                         1/6
+Covered amount                            290.00
+Less: VAT exemption                       -31.07
+Less: discount (20%)                      -51.79
+Net                                       207.14
+
+Signature: _____________________________________
+------------------------------------------------
+PWD DISCOUNT
+Name                                  Liza Ramos
+ID (PWD ID) No.                    PWD-0722-3001
+TIN                                            -
+Share of group order                         1/6
+Covered amount                            290.00
+Less: VAT exemption                       -31.07
+Less: discount (20%)                      -51.79
+Net                                       207.14
+
+Signature: _____________________________________
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+                [ISSUED OFFLINE]
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000005
+Date                         2026-10-26 09:00:12
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Protein shake
+  1 x 150.00                              150.00
+------------------------------------------------
+Total sales                               150.00
+Less: VAT exemption                       -16.07
+Less: NAAC discount (20%)                 -26.79
+AMOUNT DUE                                107.14
+------------------------------------------------
+VATable sales                               0.00
+VAT amount (12%)                            0.00
+VAT-exempt sales                          107.14
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                      107.15
+Change                                      0.01
+------------------------------------------------
+NATIONAL ATHLETE/COACH DISCOUNT
+Name                                  Hidilyn D.
+ID (NAAC ID) No.                       NAAC-0042
+TIN                                            -
+Covered amount                            150.00
+Less: VAT exemption                       -16.07
+Less: discount (20%)                      -26.79
+Net                                       107.14
+
+Signature: _____________________________________
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000006
+Date                         2026-10-26 09:00:14
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Infant formula 900g
+  1 x 1,120.00                          1,120.00
+Iced coffee
+  1 x 120.00                              120.00
+------------------------------------------------
+Total sales                             1,240.00
+Less: VAT exemption                      -120.00
+Less: SOLO discount (10%)                -100.00
+AMOUNT DUE                              1,020.00
+------------------------------------------------
+VATable sales                             107.14
+VAT amount (12%)                           12.86
+VAT-exempt sales                          900.00
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                    1,020.00
+------------------------------------------------
+SOLO PARENT DISCOUNT
+Name                              Ana Villanueva
+ID (Solo Parent ID) No.              SP-CEB-0310
+TIN                                            -
+Covered amount                          1,120.00
+Less: VAT exemption                      -120.00
+Less: discount (10%)                     -100.00
+Net                                       900.00
+
+Signature: _____________________________________
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000007
+Date                         2026-10-26 09:00:16
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Halo-halo
+  1 x 160.00                              160.00
+------------------------------------------------
+Total sales                               160.00
+AMOUNT DUE                                160.00
+------------------------------------------------
+VATable sales                             142.86
+VAT amount (12%)                           17.14
+VAT-exempt sales                            0.00
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                      200.00
+Change                                     40.00
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000008
+Date                         2026-10-26 09:00:18
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Bottled water
+  4 x 35.00                               140.00
+------------------------------------------------
+Total sales                               140.00
+AMOUNT DUE                                140.00
+------------------------------------------------
+VATable sales                             125.00
+VAT amount (12%)                           15.00
+VAT-exempt sales                            0.00
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                      140.00
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                      VOID
+Document No.                            00000001
+Date                         2026-10-26 09:00:20
+Terminal / user                    T1 / cashier1
+Reference                       INVOICE 00000007
+Reason                          Wrong item keyed
+Approved by                                 sup1
+------------------------------------------------
+Halo-halo
+  1 x 160.00                              160.00
+------------------------------------------------
+Total sales                               160.00
+TOTAL                                     160.00
+------------------------------------------------
+VATable sales                             142.86
+VAT amount (12%)                           17.14
+VAT-exempt sales                            0.00
+Zero-rated sales                            0.00
+------------------------------------------------
+Refunded (CASH)                           160.00
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                     REFUND
+Document No.                            00000001
+Date                         2026-10-26 09:00:22
+Terminal / user                    T1 / cashier1
+Reference                       INVOICE 00000002
+Reason                          Dish served cold
+Approved by                                 sup1
+------------------------------------------------
+Sinigang na baboy
+  1 x 320.00                              320.00
+------------------------------------------------
+Total sales                               320.00
+Less: VAT exemption                       -34.29
+Less: SC discount                         -57.14
+TOTAL                                     228.57
+------------------------------------------------
+VATable sales                               0.00
+VAT amount (12%)                            0.00
+VAT-exempt sales                          228.57
+Zero-rated sales                            0.00
+------------------------------------------------
+Refunded (CASH)                           228.57
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                     RETURN
+Document No.                            00000001
+Date                         2026-10-26 09:00:24
+Terminal / user                    T1 / cashier1
+Reference                       INVOICE 00000008
+Reason                        Unopened, returned
+Approved by                                 sup1
+------------------------------------------------
+Bottled water
+  2 x 35.00                                70.00
+------------------------------------------------
+Total sales                                70.00
+TOTAL                                      70.00
+------------------------------------------------
+VATable sales                              62.50
+VAT amount (12%)                            7.50
+VAT-exempt sales                            0.00
+Zero-rated sales                            0.00
+------------------------------------------------
+Refunded (CASH)                            70.00
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                   ORDER SLIP
+Document No.                            00000001
+Date                         2026-10-26 09:00:26
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+For                                      Table 7
+Kare-kare
+  1 x 680.00                              680.00
+Garlic rice
+  3 x 45.00                               135.00
+------------------------------------------------
+TOTAL                                     815.00
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+             ACKNOWLEDGMENT RECEIPT
+Document No.                            00000001
+Date                         2026-10-26 09:00:28
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Received from                          Maria Lim
+For              Deposit: birthday party, Nov 15
+AMOUNT RECEIVED                         3,000.00
+------------------------------------------------
+CASH                                    3,000.00
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+               COLLECTION RECEIPT
+Document No.                            00000001
+Date                         2026-10-26 09:00:30
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Received from                          XYZ Corp.
+TIN                            555-666-777-00000
+For                    Catering invoice 00000123
+AMOUNT RECEIVED                         4,500.00
+------------------------------------------------
+BANK                                    4,500.00
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                  CANCELLATION
+Document No.                            00000001
+Date                         2026-10-26 09:00:32
+Terminal / user                        T1 / sup1
+Reference                         ORDER 00000001
+Reason           Table walked out before serving
+------------------------------------------------
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+             MANUAL INVOICE RECORD
+Document No.                            00000001
+Date                         2026-10-26 09:00:34
+Terminal / user                        T1 / sup1
+Reason                  Power outage 13:10-13:40
+Manual invoice no.                   BKLT-000451
+Manual invoice date                   2026-10-26
+------------------------------------------------
+Sold to                         Corporate client
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Party tray (manual)
+  1 x 2,500.00                          2,500.00
+------------------------------------------------
+Total sales                             2,500.00
+AMOUNT DUE                              2,500.00
+------------------------------------------------
+VATable sales                           2,232.14
+VAT amount (12%)                          267.86
+VAT-exempt sales                            0.00
+Zero-rated sales                            0.00
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0
+ THIS DOCUMENT IS NOT VALID FOR CLAIM OF INPUT
+                      TAX.
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                   X READING
+Document No.                              000001
+Date                         2026-10-26 09:00:36
+Terminal / user                        T1 / sup1
+------------------------------------------------
+Ledger range                              1 - 16
+Beginning invoice                       00000001
+Ending invoice                          00000008
+Beginning grand total                       0.00
+Ending grand total                      5,344.00
+Reset counter                                  0
+Z counter                                      0
+------------------------------------------------
+Gross sales                             5,344.00
+Less: NAAC discount                       -26.79
+Less: PROMO discount                      -50.00
+Less: PWD discount                        -87.33
+Less: SC discount                        -116.97
+Less: SOLO discount                      -100.00
+Less: VAT exemption                      -258.64
+Less: voids                          -160.00 (1)
+Less: refunds                        -228.57 (1)
+Less: returns                         -70.00 (1)
+NET SALES                               4,245.70
+------------------------------------------------
+VATable sales                           2,205.35
+VAT amount                                264.65
+VAT-exempt sales                        2,084.27
+Zero-rated sales                          150.00
+Invoices issued                                8
+Manual invoices recorded            2,500.00 (1)
+------------------------------------------------
+CARD                                    1,255.00
+CASH                                    2,848.56
+GCASH                                     142.14
+================================================
+             Monset POS Core v0.2.0
+
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                   Z READING
+Document No.                              000001
+Date                         2026-10-26 09:00:38
+Terminal / user                        T1 / sup1
+------------------------------------------------
+Ledger range                              1 - 17
+Beginning invoice                       00000001
+Ending invoice                          00000008
+Beginning grand total                       0.00
+Ending grand total                      5,344.00
+Reset counter                                  0
+Z counter                                      1
+------------------------------------------------
+Gross sales                             5,344.00
+Less: NAAC discount                       -26.79
+Less: PROMO discount                      -50.00
+Less: PWD discount                        -87.33
+Less: SC discount                        -116.97
+Less: SOLO discount                      -100.00
+Less: VAT exemption                      -258.64
+Less: voids                          -160.00 (1)
+Less: refunds                        -228.57 (1)
+Less: returns                         -70.00 (1)
+NET SALES                               4,245.70
+------------------------------------------------
+VATable sales                           2,205.35
+VAT amount                                264.65
+VAT-exempt sales                        2,084.27
+Zero-rated sales                          150.00
+Invoices issued                                8
+Manual invoices recorded            2,500.00 (1)
+------------------------------------------------
+CARD                                    1,255.00
+CASH                                    2,848.56
+GCASH                                     142.14
+================================================
+             Monset POS Core v0.2.0

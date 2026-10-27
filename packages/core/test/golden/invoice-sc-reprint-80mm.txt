@@ -1,0 +1,60 @@
+               *** REPRINT #1 ***
+     Reprinted 2026-10-26 09:00:42 by owner
+              Kusina ni Lola Corp.
+                 Lola's Kitchen
+         12 Osmeña Blvd, Cebu City 6000
+         VAT REG TIN 123-456-789-00000
+                MIN: 26010100001
+                SN: TAB-S9-0042
+             SLN: MPOS-26-ABCDEF-7
+================================================
+                    INVOICE
+Invoice No.                             00000002
+Date                         2026-10-26 09:00:06
+Terminal / user                    T1 / cashier1
+------------------------------------------------
+Sold to                     ____________________
+Address                     ____________________
+TIN                         ____________________
+Business style              ____________________
+------------------------------------------------
+Sinigang na baboy
+  1 x 320.00                              320.00
+Rice
+  2 x 45.00                                90.00
+------------------------------------------------
+Total sales                               410.00
+Less: VAT exemption                       -39.11
+Less: SC discount (20%)                   -65.18
+AMOUNT DUE                                305.71
+------------------------------------------------
+VATable sales                              40.18
+VAT amount (12%)                            4.82
+VAT-exempt sales                          260.71
+Zero-rated sales                            0.00
+------------------------------------------------
+CASH                                      310.00
+Change                                      4.29
+------------------------------------------------
+SENIOR CITIZEN DISCOUNT
+Name                             Remedios Santos
+ID (OSCA ID) No.                   OSCA-CEB-0001
+TIN                                            -
+Covered amount                            365.00
+Less: VAT exemption                       -39.11
+Less: discount (20%)                      -65.18
+Net                                       260.71
+
+Signature: _____________________________________
+------------------------------------------------
+Seal: <signed validation seal>
+================================================
+Supplier                               Monset.co
+Supplier address                  [TO BE ISSUED]
+Supplier TIN                      [TO BE ISSUED]
+Accreditation No.                 [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+Valid until                       [TO BE ISSUED]
+PTU No.                           [TO BE ISSUED]
+Date issued                       [TO BE ISSUED]
+             Monset POS Core v0.2.0

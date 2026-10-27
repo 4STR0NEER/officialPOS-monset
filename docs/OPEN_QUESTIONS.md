@@ -80,3 +80,24 @@ When a client becomes VAT-registered, should the switch be allowed only right af
 
 **Q23. Rounding on partial refunds.** · open · Owner: CPA
 Partial refunds are prorated cumulatively, so the last one lands exactly on the original amount. In rare rounding cases up to 1 centavo of line discount can stay unreversed. Is that acceptable, or should the final refund always clear the remainder?
+
+## Raised in Phase 2
+
+**Q24. Buyer details threshold.** · open · Owner: CPA
+Under RR 7-2024, above what amount must a non-VAT or consumer buyer's name, address and TIN appear? Default: they're required only for VAT-registered buyers, and blank lines print otherwise so they can be filled in by hand.
+
+**Q25. 5% basic-necessities discount (SC_BNPC, PWD_BNPC).** · open · Owner: CPA
+Two things to confirm:
+- Is the 5% computed on the VAT-inclusive price?
+- What is the current weekly purchase cap?
+
+Default: 5% of the VAT-inclusive price, and the cap is not enforced yet. Enforcing it needs a per-holder purchase history (the ID number is stored, so it can be added later without a schema change).
+
+**Q26. Seal key custody.** · open · Owner: Monset
+Each terminal's Ed25519 seal key is created at install and stored in the client's database (`setting.seal_key`, which cannot be replaced). Phase 5 adds a Monset-signed install certificate that binds the key to the SLN. Until then, a seal proves the document is unaltered and was signed by that terminal's key, but not that the key belongs to a licensed install.
+
+**Q27. Promo vs special discount.** · open · Owner: CPA / client
+On any covered share, the system applies whichever is larger, the promo or the special discount, and never both. Some establishments let a senior choose. Is "larger wins" acceptable as the default?
+
+**Q28. Per-line rounding of VAT exemption.** · open · Owner: CPA
+The VAT exemption is computed line by line, so a group share across several lines can differ by 1 centavo from computing it on the share total. Example from the demo: 23.03 line by line versus 23.04 on the total. Which does BIR expect?

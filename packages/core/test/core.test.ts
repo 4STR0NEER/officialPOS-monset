@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { addGrandTotal, CORE_VERSION, CoreError, GRAND_TOTAL_MAX, openCore, priceSale, settle, SUPPLEMENTARY_FOOTER, DEMO_WATERMARK } from '@monset/core';
-import { cash, line, make } from './helpers.ts';
+import { cash, flat, line, make } from './helpers.ts';
 
 const SRC = join(import.meta.dirname, '../src');
 const coreSource = () => readdirSync(SRC).map((f) => readFileSync(join(SRC, f), 'utf8')).join('\n');
@@ -69,7 +69,7 @@ describe('A: architectural constraints', () => {
     const s = pos.postSale({ userId: 'c1', online: true, lines: [line(1000)], payments: cash(1000) });
     pos.postReversal({ userId: 'c1', online: true, type: 'VOID', invoiceSeq: s.seq, reason: 'test' });
     pos.xReading('s1');
-    for (const r of db.all<{ text: string }>(`SELECT text FROM journal`)) expect(r.text).toContain(DEMO_WATERMARK);
+    for (const r of db.all<{ text: string }>(`SELECT text FROM journal`)) expect(flat(r.text)).toContain(DEMO_WATERMARK);
   });
 });
 
@@ -142,14 +142,14 @@ describe('B: compliance core (RMO 24-2023 IV(5))', () => {
 
     const log = db.all<{ action: string; user_id: string; device_id: string; at: string; before_json: string | null; after_json: string | null }>(`SELECT * FROM activity_log ORDER BY id`);
     expect(log.map((l) => l.action)).toEqual([
-      'TERMINAL_INIT', 'LOGIN', 'ISSUE', 'ISSUE', 'REJECTED', 'SETTINGS_CHANGE', 'RULE_ADD', 'ISSUE', 'ISSUE', 'EXPORT', 'TRANSMIT_ACK', 'PERMISSION_CHANGE',
+      'TERMINAL_INIT', 'SETTINGS_CHANGE', 'LOGIN', 'ISSUE', 'ISSUE', 'REJECTED', 'SETTINGS_CHANGE', 'RULE_ADD', 'ISSUE', 'ISSUE', 'EXPORT', 'TRANSMIT_ACK', 'PERMISSION_CHANGE',
     ]);
     for (const l of log) {
       expect(l.user_id).toBeTruthy();
       expect(l.device_id).toBe('DEV-1');
       expect(l.at).toMatch(/Z$/);
     }
-    const settings = log.find((l) => l.action === 'SETTINGS_CHANGE')!;
+    const settings = log.filter((l) => l.action === 'SETTINGS_CHANGE').at(-1)!;
     expect(JSON.parse(settings.before_json!).min).toBeNull();
     expect(JSON.parse(settings.after_json!).min).toBe('123456789012345');
     expect(pos.verify().ok).toBe(true);
@@ -171,8 +171,8 @@ describe('B: compliance core (RMO 24-2023 IV(5))', () => {
     pos.zReading('s1');
     expect(db.get(`SELECT count(*) AS n FROM journal`)).toEqual(db.get(`SELECT count(*) AS n FROM ledger_entry`));
     const ej = pos.exportJournal('owner');
-    for (const t of ['Invoice', 'REFUND', 'X', 'Z']) expect(ej).toContain(t);
-    expect(ej.match(/={40}/g)).toHaveLength(4);
+    for (const t of ['INVOICE', 'REFUND', 'X READING', 'Z READING']) expect(ej).toContain(t);
+    expect(ej.match(/Monset POS Core v/g)).toHaveLength(4);
   });
 
   it('T-B5-supplementary-footer: reversal documents carry the input-tax footer; invoices do not', () => {
@@ -180,7 +180,7 @@ describe('B: compliance core (RMO 24-2023 IV(5))', () => {
     const s = pos.postSale({ userId: 'c1', online: true, lines: [line(1000)], payments: cash(1000) });
     expect(s.text).not.toContain(SUPPLEMENTARY_FOOTER);
     expect(s.text).not.toMatch(/official receipt/i);
-    expect(pos.postReversal({ userId: 'c1', online: true, type: 'VOID', invoiceSeq: s.seq, reason: 'x' }).text).toContain(SUPPLEMENTARY_FOOTER);
+    expect(flat(pos.postReversal({ userId: 'c1', online: true, type: 'VOID', invoiceSeq: s.seq, reason: 'x' }).text)).toContain(SUPPLEMENTARY_FOOTER);
   });
 
   it('T-B6-x-not-closing / z-counter-monotonic: X leaves the day open; Z closes it and counts up', () => {
@@ -296,8 +296,8 @@ describe('totals (Phase 1 subset)', () => {
   it('VAT rate comes from effective-dated rules, never a constant', () => {
     const { pos, clock } = make();
     pos.addRule('owner', 'VAT_RATE', '2027-01-01', { rateBp: 1500 }, 'hypothetical rate change');
-    expect(pos.postSale({ userId: 'c1', online: true, lines: [line(11200)], payments: cash(11200) }).text).toMatch(/VAT\s+12\.00/);
+    expect(pos.postSale({ userId: 'c1', online: true, lines: [line(11200)], payments: cash(11200) }).text).toMatch(/VAT amount \(12%\)\s+12\.00/);
     clock.set('2027-01-01T00:00:00.000Z'); // 08:00 Manila time on Jan 1
-    expect(pos.postSale({ userId: 'c1', online: true, lines: [line(11500)], payments: cash(11500) }).text).toMatch(/VAT\s+15\.00/);
+    expect(pos.postSale({ userId: 'c1', online: true, lines: [line(11500)], payments: cash(11500) }).text).toMatch(/VAT amount \(15%\)\s+15\.00/);
   });
 });

@@ -1,8 +1,8 @@
 import type { Db } from './port.ts';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
-export const DOC_TYPES = ['INVOICE', 'VOID', 'REFUND', 'RETURN', 'CANCEL', 'ORDER', 'ACK', 'COLLECTION', 'X', 'Z'] as const;
+export const DOC_TYPES = ['INVOICE', 'VOID', 'REFUND', 'RETURN', 'CANCEL', 'ORDER', 'ACK', 'COLLECTION', 'MANUAL', 'X', 'Z'] as const;
 export type DocType = (typeof DOC_TYPES)[number];
 
 const appendOnly = (t: string) => `
@@ -117,21 +117,57 @@ CREATE TABLE outbox (
 INSERT INTO accumulator (id) VALUES (1);
 INSERT INTO rule_set (kind, effective_from, payload, source_ref)
 VALUES ('VAT_RATE', '2006-02-01', '{"rateBp":1200}', 'RA 9337 (12% VAT) - verify current rate');
-${DOC_TYPES.map((t) => `INSERT INTO doc_series (doc_type, next_no, width) VALUES ('${t}', 1, ${t === 'X' || t === 'Z' ? 6 : 8});`).join('\n')}
+${DOC_TYPES.filter((t) => t !== 'MANUAL').map((t) => `INSERT INTO doc_series (doc_type, next_no, width) VALUES ('${t}', 1, ${t === 'X' || t === 'Z' ? 6 : 8});`).join('\n')}
 `;
+
+const V2 = `
+ALTER TABLE terminal ADD COLUMN paper TEXT NOT NULL DEFAULT '80' CHECK (paper IN ('58','80','A4'));
+ALTER TABLE terminal ADD COLUMN ptu_label TEXT NOT NULL DEFAULT 'PTU No.';
+ALTER TABLE journal ADD COLUMN blocks TEXT;
+
+-- Seller (client) and supplier (Monset) details, snapshotted into every document. Changes are logged.
+CREATE TABLE setting (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+CREATE TRIGGER setting_no_delete BEFORE DELETE ON setting BEGIN SELECT RAISE(ABORT, 'settings cannot be deleted'); END;
+CREATE TRIGGER seal_key_fixed BEFORE UPDATE ON setting WHEN OLD.key = 'seal_key'
+BEGIN SELECT RAISE(ABORT, 'the seal key cannot be replaced'); END;
+
+-- Every print of every document. Copy 0 is the original; anything after is a reprint.
+CREATE TABLE print_log (
+  id INTEGER PRIMARY KEY,
+  seq INTEGER NOT NULL REFERENCES ledger_entry(seq),
+  copy_no INTEGER NOT NULL,
+  at TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  UNIQUE (seq, copy_no)
+);
+${appendOnly('print_log')}
+
+INSERT INTO doc_series (doc_type, next_no, width) VALUES ('MANUAL', 1, 8);
+INSERT INTO setting (key, value) VALUES ('supplier', '{"accreditationIssued":"[TO BE ISSUED]","accreditationNo":"[TO BE ISSUED]","accreditationValidUntil":"[TO BE ISSUED]","address":"[TO BE ISSUED]","name":"Monset.co","tin":"[TO BE ISSUED]"}');
+INSERT INTO rule_set (kind, effective_from, payload, source_ref) VALUES
+('DISCOUNT_TYPE:SC', '2000-01-01', '{"categories":null,"code":"SC","idTypes":["OSCA ID","Digital National Senior Citizen ID","Other government ID"],"label":"Senior Citizen","rateBp":2000,"requireTin":false,"vatExempt":true}', 'RA 9994; digital national SC ID accepted - verify (Q12, Q13)'),
+('DISCOUNT_TYPE:PWD', '2000-01-01', '{"categories":null,"code":"PWD","idTypes":["PWD ID"],"label":"PWD","rateBp":2000,"requireTin":false,"vatExempt":true}', 'RA 10754 - verify (Q12)'),
+('DISCOUNT_TYPE:NAAC', '2000-01-01', '{"categories":null,"code":"NAAC","idTypes":["NAAC ID"],"label":"National Athlete/Coach","rateBp":2000,"requireTin":false,"vatExempt":true}', 'RA 10699 - verify (Q12)'),
+('DISCOUNT_TYPE:SOLO', '2000-01-01', '{"categories":["BABY_MILK","BABY_FOOD","BABY_SUPPLIES","MEDICINE","VACCINE","MEDICAL_SUPPLIES"],"code":"SOLO","idTypes":["Solo Parent ID"],"label":"Solo Parent","rateBp":1000,"requireTin":false,"vatExempt":true}', 'RA 11861 - verify items and eligibility (Q12)'),
+('DISCOUNT_TYPE:SC_BNPC', '2000-01-01', '{"categories":["BASIC_NECESSITY","PRIME_COMMODITY"],"code":"SC_BNPC","idTypes":["OSCA ID","Digital National Senior Citizen ID","Other government ID"],"label":"Senior Citizen BNPC","rateBp":500,"requireTin":false,"vatExempt":false}', 'DTI-DA joint order on 5% BNPC - weekly cap not enforced yet (Q12)'),
+('DISCOUNT_TYPE:PWD_BNPC', '2000-01-01', '{"categories":["BASIC_NECESSITY","PRIME_COMMODITY"],"code":"PWD_BNPC","idTypes":["PWD ID"],"label":"PWD BNPC","rateBp":500,"requireTin":false,"vatExempt":false}', 'DTI-DA joint order on 5% BNPC - weekly cap not enforced yet (Q12)');
+`;
+
+const MIGRATIONS = [V1, V2];
 
 export function migrate(db: Db): void {
   const hasMeta = db.get(`SELECT 1 FROM sqlite_master WHERE type='table' AND name='meta'`);
   const version = hasMeta ? Number(db.get<{ value: string }>(`SELECT value FROM meta WHERE key='schema_version'`)?.value ?? 0) : 0;
   if (version > SCHEMA_VERSION) throw new Error(`database schema v${version} is newer than this core (v${SCHEMA_VERSION})`);
-  if (version === SCHEMA_VERSION) return;
-  db.exec('BEGIN IMMEDIATE');
-  try {
-    db.exec(V1);
-    db.run(`INSERT INTO meta (key, value) VALUES ('schema_version', ?)`, String(SCHEMA_VERSION));
-    db.exec('COMMIT');
-  } catch (e) {
-    db.exec('ROLLBACK');
-    throw e;
+  for (let v = version; v < SCHEMA_VERSION; v++) {
+    db.exec('BEGIN IMMEDIATE');
+    try {
+      db.exec(MIGRATIONS[v]);
+      db.run(`INSERT OR REPLACE INTO meta (key, value) VALUES ('schema_version', ?)`, String(v + 1));
+      db.exec('COMMIT');
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    }
   }
 }

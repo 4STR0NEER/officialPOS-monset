@@ -1,6 +1,6 @@
 # Monset POS: Architecture
 
-Status: **Phase 1 built** (compliance core + tests). Compliance core version: `core 0.1.0` (pre-accreditation).
+Status: **Phase 2 built** (invoice engine, layouts, special discounts, supplementary documents, seal). Compliance core version: `core 0.2.0` (pre-accreditation).
 
 Every regulatory statement here is a requirement still to verify. Anything that is in doubt is listed in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 
@@ -157,7 +157,8 @@ Money is stored as **integer centavos** (`INTEGER`). The largest grand total, 99
 Monset root key (offline, Monset only)
    └─ signs → install certificate {SLN, terminal pubkey, client TIN+branch, MIN, valid}
                   └─ terminal key signs → invoice digest {SLN, doc_no, date, total, VAT, buyer TIN?, hash}
-QR = base45( cbor{ cert, digest, sig } )  ≈ 250–350 bytes, fits a QR version 10–12 on 58mm
+QR = MPOS1.<claims>.<sig>.<pubkey>  (base64url; claims are pipe-joined: SLN|TIN|MIN|no.|reset|time|amount|VAT)
+     ≈ 250 chars, QR version 10 at ECC M. Phase 5 adds the install certificate.
 ```
 
 The page at `monset.co/verify` is **static**. It holds only Monset's root public key, checks the certificate chain and signature in the browser, and shows what the invoice claims. Nothing is stored, and no client data reaches Monset. A valid seal proves the invoice came from a licensed install unaltered. It does not prove the invoice exists in the client's ledger, and the pack says so plainly. Q11 asks whether BIR wants more.
@@ -232,3 +233,12 @@ The look comes from the Monset website, with tokens copied from `monset-website/
 - **Sync tests:** N simulated terminals work offline, then sync, and the replicas must equal the sources.
 - **Golden files:** the text layout of every document type at 32 and 48 columns, compared byte for byte.
 - Every row in the matrix has a test ID, and CI fails if any row is missing one.
+
+
+## Phase 2 notes (as built)
+
+- **Documents** (`core/src/documents.ts`): `buildBlocks()` turns a ledger body into blocks. `renderText()` produces 32, 48 or 64 columns, `renderEscPos()` produces printer bytes with a native QR and a cut, and `renderHtml()` produces A4 with an SVG QR via `uqr`. The blocks are stored in `journal.blocks` at issue time, so a reprint years later is exact.
+- **Header snapshot:** every body carries `header` (seller, supplier, terminal registration). It is hashed with the document, so a later settings change never alters a past invoice.
+- **Special discounts** (`core/src/totals.ts`): coverage is either the holder's identified items or a `1/diners` share of every eligible line. Each covered share works out as: VAT removed → discount on the VAT-free amount → the share becomes VAT-exempt. Shares are cumulative fractions, so they never exceed the line. If a promo on the same share is worth more, the promo is kept and the special discount is not applied. Types, rates, eligible categories and accepted IDs are `rule_set` rows (`DISCOUNT_TYPE:<code>`).
+- **New tables in schema v2:** `setting` (seller, supplier, seal key; changes logged, never deleted) and `print_log` (append-only; copy 0 is the original, later copies print "REPRINT #n"). The `MANUAL` series is new, and the terminal gains `paper` and `ptu_label`.
+- **Supplementary documents:** ORDER, ACK and COLLECTION each have their own series. CANCEL may reverse only those, and `verifyAll` enforces what each correcting document may point at.

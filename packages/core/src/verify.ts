@@ -38,6 +38,10 @@ export interface Issue {
 }
 
 export const REVERSALS = new Set(['VOID', 'REFUND', 'RETURN']);
+/** What each correcting document may point at. */
+export const REVERSAL_TARGETS: Record<string, string[]> = {
+  VOID: ['INVOICE'], REFUND: ['INVOICE'], RETURN: ['INVOICE'], CANCEL: ['ORDER', 'ACK', 'COLLECTION'],
+};
 
 export function hashEntry(r: Omit<EntryRow, 'hash'> & { hash?: string }): string {
   const { body, prev_hash, hash: _h, ...header } = r;
@@ -151,9 +155,10 @@ function verifySnapshot(db: Db): Issue[] {
       }
       last.set(row.doc_type, { no: row.doc_no, reset: row.series_reset });
 
-      if (REVERSALS.has(row.doc_type)) {
+      const allowed = REVERSAL_TARGETS[row.doc_type];
+      if (allowed) {
         const target = row.reverses_seq == null ? undefined : types.get(row.reverses_seq);
-        if (target !== 'INVOICE') issues.push({ kind: 'BAD_REVERSAL', seq: row.seq, detail: `reverses ${row.reverses_seq ?? 'nothing'}` });
+        if (!target || !allowed.includes(target)) issues.push({ kind: 'BAD_REVERSAL', seq: row.seq, detail: `reverses ${row.reverses_seq ?? 'nothing'}` });
       } else if (row.reverses_seq != null) {
         issues.push({ kind: 'BAD_REVERSAL', seq: row.seq, detail: `${row.doc_type} cannot reverse` });
       }

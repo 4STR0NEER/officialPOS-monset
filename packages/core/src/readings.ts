@@ -23,6 +23,7 @@ export interface Reading {
   voids: Bucket;
   refunds: Bucket;
   returns: Bucket;
+  manual: Bucket; // manual invoices recorded (outage / VAT buyer fallback); excluded from netSales
   netSales: number; // sales.net minus voids, refunds and returns
   payments: Record<string, number>; // collected per method, net of change and refunds; sums to netSales
 }
@@ -65,6 +66,7 @@ export function summarize(
     voids: bucket(),
     refunds: bucket(),
     returns: bucket(),
+    manual: bucket(),
     netSales: 0,
     payments: {},
   };
@@ -77,6 +79,7 @@ export function summarize(
       const s = r.sales;
       s.gross += b.totals.gross;
       s.discount += b.totals.discount;
+      s.vatExemption += b.totals.vatExemption ?? 0;
       s.net += b.totals.net;
       s.vatable += b.totals.vatable;
       s.vat += b.totals.vat;
@@ -93,6 +96,11 @@ export function summarize(
       k.amount += b.totals.net;
       k.vat += b.totals.vat;
       for (const p of b.refunds) add(r.payments, p.method, -p.amount);
+    } else if (row.doc_type === 'MANUAL') {
+      const b = JSON.parse(row.body) as ReversalBody;
+      r.manual.count += 1;
+      r.manual.amount += b.totals.net;
+      r.manual.vat += b.totals.vat;
     }
   }
   r.netSales = r.sales.net - r.voids.amount - r.refunds.amount - r.returns.amount;

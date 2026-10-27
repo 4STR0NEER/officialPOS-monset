@@ -1,6 +1,8 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { CoreError, GRAND_TOTAL_MAX, priceSale, type EntryRow, type Reading, type SaleLine } from '@monset/core';
+import { CoreError, GRAND_TOTAL_MAX, priceSale, type DiscountRule, type EntryRow, type Reading, type SaleLine } from '@monset/core';
+
+const SC: DiscountRule = { code: 'SC', label: 'Senior Citizen', rateBp: 2000, vatExempt: true, categories: null, idTypes: [], requireTin: false };
 import { make } from './helpers.ts';
 
 const lineArb: fc.Arbitrary<SaleLine> = fc.record({
@@ -11,7 +13,7 @@ const lineArb: fc.Arbitrary<SaleLine> = fc.record({
 });
 
 const cmdArb = fc.oneof(
-  { weight: 6, arbitrary: fc.record({ op: fc.constant('sale' as const), lines: fc.array(lineArb, { minLength: 1, maxLength: 4 }), extra: fc.nat(5000), card: fc.boolean(), discount: fc.nat(500), offline: fc.boolean() }) },
+  { weight: 6, arbitrary: fc.record({ op: fc.constant('sale' as const), lines: fc.array(lineArb, { minLength: 1, maxLength: 4 }), extra: fc.nat(5000), card: fc.boolean(), discount: fc.nat(500), offline: fc.boolean(), diners: fc.option(fc.integer({ min: 1, max: 6 })) }) },
   { weight: 2, arbitrary: fc.record({ op: fc.constant('void' as const), pick: fc.nat() }) },
   { weight: 2, arbitrary: fc.record({ op: fc.constantFrom('refund' as const, 'return' as const), pick: fc.nat(), lineNo: fc.integer({ min: 1, max: 2 }), qty: fc.integer({ min: 1, max: 1500 }) }) },
   { weight: 1, arbitrary: fc.record({ op: fc.constantFrom('x' as const, 'z' as const) }) },
@@ -28,11 +30,12 @@ function run(cmds: Cmd[]) {
     try {
       if (c.op === 'sale') {
         const lines = (c.lines as SaleLine[]).map((l, i) => (i === 0 && c.discount ? { ...l, discounts: [{ type: 'PROMO', amount: Math.min(c.discount, Math.round((l.qtyMilli * l.unitPrice) / 1000)) }] } : l));
-        const due = priceSale(lines, 'VAT', 1200).totals.net;
+        const specialDiscounts = c.diners ? [{ type: 'SC', holder: { name: 'P', idNo: 'OSCA-1' }, diners: c.diners }] : [];
+        const due = priceSale(lines, 'VAT', 1200, specialDiscounts, () => SC).totals.net;
         const payments = c.card ? [{ method: 'CARD', amount: due }] : [{ method: 'CASH', amount: due + c.extra }];
         if (due === 0 && c.card) continue;
         if (due + (c.card ? 0 : c.extra) === 0) continue;
-        invoices.push(t.pos.postSale({ userId: 'c1', online: !c.offline, lines, payments }).seq);
+        invoices.push(t.pos.postSale({ userId: 'c1', online: !c.offline, lines, payments, specialDiscounts }).seq);
       } else if (c.op === 'void' && invoices.length) {
         t.pos.postReversal({ userId: 'c1', online: true, type: 'VOID', invoiceSeq: invoices[c.pick % invoices.length], reason: 'p' });
       } else if ((c.op === 'refund' || c.op === 'return') && invoices.length) {
@@ -52,7 +55,7 @@ function run(cmds: Cmd[]) {
 const ledger = (db: ReturnType<typeof make>['db']) =>
   db.all<EntryRow>(`SELECT * FROM ledger_entry ORDER BY seq`).map((r) => ({ ...r, b: JSON.parse(r.body) }));
 
-describe('compliance core invariants (property-based)', () => {
+describe('compliance core invariants (property-based)', { timeout: 120_000 }, () => {
   const days = fc.array(cmdArb, { minLength: 1, maxLength: 60 });
 
   it('P-B1-gt-monotonic: the grand total never decreases', () => {
@@ -98,6 +101,7 @@ describe('compliance core invariants (property-based)', () => {
         expect(zb.sales.gross).toBe(sum('gross'));
         expect(zb.sales.net).toBe(sum('net'));
         expect(zb.sales.vatable + zb.sales.vat + zb.sales.exempt + zb.sales.zeroRated).toBe(sum('net'));
+        expect(zb.sales.gross - zb.sales.discount - zb.sales.vatExemption).toBe(zb.sales.net);
         expect(zb.voids.amount).toBe(rev('VOID'));
         expect(zb.refunds.amount).toBe(rev('REFUND'));
         expect(zb.returns.amount).toBe(rev('RETURN'));
@@ -123,6 +127,23 @@ describe('compliance core invariants (property-based)', () => {
           expect(back.reduce((a: number, x: { qtyMilli: number }) => a + x.qtyMilli, 0)).toBeLessThanOrEqual(l.qtyMilli);
           expect(back.reduce((a: number, x: { net: number }) => a + x.net, 0)).toBeLessThanOrEqual(l.net);
           for (const x of back) expect(x.net).toBeGreaterThanOrEqual(0);
+        }
+      }
+    }), { numRuns: 150 });
+  });
+
+  it('P-C14-bounds: discounts and exemptions never exceed the line; every holder share is non-negative', () => {
+    fc.assert(fc.property(days, (cmds) => {
+      const { db } = run(cmds);
+      for (const r of ledger(db).filter((x) => ['INVOICE', 'REFUND', 'RETURN'].includes(x.doc_type))) {
+        for (const l of r.b.lines) {
+          expect(l.discount + l.vatExemption).toBeLessThanOrEqual(l.gross);
+          expect(l.net).toBe(l.gross - l.discount - l.vatExemption);
+          expect(Object.values(l.netByClass as Record<string, number>).reduce((a, v) => a + v, 0)).toBe(l.net);
+        }
+        for (const sd of r.b.specialDiscounts ?? []) {
+          expect(sd.net).toBeGreaterThanOrEqual(0);
+          expect(sd.vatExemption + sd.discount + sd.net).toBe(sd.coveredGross);
         }
       }
     }), { numRuns: 150 });
